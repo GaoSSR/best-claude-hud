@@ -278,7 +278,7 @@ cargo build --release
 mkdir -p release-artifacts
 tar -C target/release -czf release-artifacts/best-claude-hud-darwin-arm64.tar.gz best-claude-hud
 node packaging/npm/scripts/build-packages.js \
-  --version 0.1.2 \
+  --version 0.1.3 \
   --release-dir release-artifacts \
   --output-dir npm-tarballs
 ```
@@ -293,14 +293,14 @@ Release is split into two workflows:
 Create a GitHub Release:
 
 ```bash
-git tag v0.1.2
-git push origin v0.1.2
+git tag v0.1.3
+git push origin v0.1.3
 ```
 
 Publish to npm after npm trusted publishing is configured:
 
 ```bash
-gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.2
+gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.3
 ```
 
 ## Project Resources

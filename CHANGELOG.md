@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3 - 2026-06-26
+
+- Publish the scoped npm package through GitHub Actions trusted publishing.
+- Keep npm distribution aligned with the Kiri-style single scoped package
+  layout.
+
 ## 0.1.2 - 2026-06-26
 
 - Migrate npm distribution to the Kiri-style scoped package

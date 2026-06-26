@@ -1,6 +1,6 @@
 [package]
 name = "best-claude-hud"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 description = "Minimal Claude Code statusline HUD written in Rust"
 authors = ["GaoSSR"]
