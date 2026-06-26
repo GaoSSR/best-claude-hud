@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.2 - 2026-06-26
+
+- Migrate npm distribution to the Kiri-style scoped package
+  `@gaossr/best-claude-hud`.
+- Package platform binaries as prerelease versions of the same npm package and
+  install them through npm alias optional dependencies.
+- Replace the old multi-package npm build scripts with `packaging/npm`.
+- Prepare the publish workflow for GitHub Actions trusted publishing.
+
 ## 0.1.1 - 2026-06-26
 
 - Publish the first npm registry version of `best-claude-hud`.

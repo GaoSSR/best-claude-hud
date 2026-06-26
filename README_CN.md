@@ -53,32 +53,32 @@
 `best-claude-hud` 通过 npm 分发。npm 包使用预构建原生二进制，用户不需要本地安装 Rust。
 
 ```bash
-npm install -g best-claude-hud
+npm install -g @gaossr/best-claude-hud
 ```
 
 使用 yarn 或 pnpm：
 
 ```bash
-yarn global add best-claude-hud
-pnpm add -g best-claude-hud
+yarn global add @gaossr/best-claude-hud
+pnpm add -g @gaossr/best-claude-hud
 ```
 
 国内网络可使用 npm 镜像：
 
 ```bash
-npm install -g best-claude-hud --registry https://registry.npmmirror.com
+npm install -g @gaossr/best-claude-hud --registry https://registry.npmmirror.com
 ```
 
 更新：
 
 ```bash
-npm update -g best-claude-hud
+npm update -g @gaossr/best-claude-hud
 ```
 
 卸载：
 
 ```bash
-npm uninstall -g best-claude-hud
+npm uninstall -g @gaossr/best-claude-hud
 ```
 
 ## Claude Code 配置
@@ -95,7 +95,7 @@ npm uninstall -g best-claude-hud
 }
 ```
 
-npm 包不会把二进制安装到 `~/.claude`。它使用 npm 全局命令，并从 optional dependencies 中解析当前平台对应的原生二进制。
+npm 包不会把二进制安装到 `~/.claude`。它使用 npm 全局命令，并通过 Kiri 风格的 npm alias optional dependencies 解析当前平台对应的原生二进制。
 
 ## 命令
 
@@ -242,12 +242,12 @@ patcher 会在写入前创建同目录备份文件。
 
 ## 平台支持
 
-| 平台 | npm package | 状态 |
+| 平台 | 原生二进制来源 | 状态 |
 | --- | --- | --- |
-| MacOS arm64 | `best-claude-hud-darwin-arm64` | 支持 |
-| MacOS x64 | `best-claude-hud-darwin-x64` | 支持 |
-| Linux x64 musl | `best-claude-hud-linux-x64-musl` | 支持 |
-| Windows x64 | `best-claude-hud-win32-x64` | 支持 |
+| MacOS arm64 | 通过 npm alias 安装 `@gaossr/best-claude-hud@<version>-darwin-arm64` | 支持 |
+| MacOS x64 | 通过 npm alias 安装 `@gaossr/best-claude-hud@<version>-darwin-x64` | 支持 |
+| Linux x64 musl | 通过 npm alias 安装 `@gaossr/best-claude-hud@<version>-linux-x64` | 支持 |
+| Windows x64 | 通过 npm alias 安装 `@gaossr/best-claude-hud@<version>-win32-x64` | 支持 |
 | Linux arm64 / Windows arm64 | - | 计划中 |
 
 ## 系统要求
@@ -267,17 +267,20 @@ cargo clippy -- -D warnings
 cargo test
 cargo build --release
 cargo run -- --help
-node npm/scripts/prepare-packages.js 0.1.0
+npm --prefix packaging/npm run check
+npm --prefix packaging/npm run test
 ```
 
 发布前可做 npm dry-run：
 
 ```bash
 cargo build --release
-cp target/release/best-claude-hud npm-publish/darwin-arm64/best-claude-hud
-chmod +x npm-publish/darwin-arm64/best-claude-hud
-(cd npm-publish/darwin-arm64 && npm pack --dry-run)
-(cd npm-publish/main && npm pack --dry-run)
+mkdir -p release-artifacts
+tar -C target/release -czf release-artifacts/best-claude-hud-darwin-arm64.tar.gz best-claude-hud
+node packaging/npm/scripts/build-packages.js \
+  --version 0.1.2 \
+  --release-dir release-artifacts \
+  --output-dir npm-tarballs
 ```
 
 ## 发布
@@ -290,14 +293,14 @@ chmod +x npm-publish/darwin-arm64/best-claude-hud
 创建 GitHub Release：
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.1.2
+git push origin v0.1.2
 ```
 
-npm trusted publishing 或 `NPM_TOKEN` 配置完成后发布：
+npm trusted publishing 配置完成后发布：
 
 ```bash
-gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.0
+gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.2
 ```
 
 ## 项目资源

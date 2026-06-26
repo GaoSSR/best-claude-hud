@@ -1,0 +1,39 @@
+{
+  "name": "@gaossr/best-claude-hud",
+  "version": "0.1.2",
+  "description": "Minimal Claude Code statusline HUD powered by Rust",
+  "license": "Apache-2.0",
+  "private": true,
+  "bin": {
+    "best-claude-hud": "./bin/best-claude-hud.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GaoSSR/best-claude-hud.git",
+    "directory": "packaging/npm"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "statusline",
+    "hud",
+    "rust",
+    "cli"
+  ],
+  "author": "GaoSSR",
+  "files": [
+    "LICENSE",
+    "README.md",
+    "bin/",
+    "lib/"
+  ],
+  "scripts": {
+    "check": "node --check bin/best-claude-hud.js && node --check lib/resolve-binary.js && node --check scripts/build-packages.js",
+    "pack:dry-run": "npm pack --dry-run",
+    "pack:release": "node scripts/build-packages.js --version \"$npm_package_version\" --release-dir ../../dist --output-dir ../../dist/npm",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

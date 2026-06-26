@@ -53,32 +53,32 @@ Accepted in the initial rebuild:
 `best-claude-hud` is distributed through npm. The npm package uses prebuilt native binaries; users do not need Rust installed.
 
 ```bash
-npm install -g best-claude-hud
+npm install -g @gaossr/best-claude-hud
 ```
 
 Using yarn or pnpm:
 
 ```bash
-yarn global add best-claude-hud
-pnpm add -g best-claude-hud
+yarn global add @gaossr/best-claude-hud
+pnpm add -g @gaossr/best-claude-hud
 ```
 
 For users in China:
 
 ```bash
-npm install -g best-claude-hud --registry https://registry.npmmirror.com
+npm install -g @gaossr/best-claude-hud --registry https://registry.npmmirror.com
 ```
 
 Update an existing installation:
 
 ```bash
-npm update -g best-claude-hud
+npm update -g @gaossr/best-claude-hud
 ```
 
 Uninstall:
 
 ```bash
-npm uninstall -g best-claude-hud
+npm uninstall -g @gaossr/best-claude-hud
 ```
 
 ## Claude Code Configuration
@@ -95,7 +95,7 @@ Add this to your Claude Code `~/.claude/settings.json`:
 }
 ```
 
-The npm package intentionally does not install a binary into `~/.claude`. It uses the global npm command and resolves the matching platform binary from npm optional dependencies.
+The npm package intentionally does not install a binary into `~/.claude`. It uses the global npm command and resolves the matching native binary from Kiri-style npm alias optional dependencies.
 
 ## Commands
 
@@ -242,12 +242,12 @@ The patcher creates a backup next to the target file before writing.
 
 ## Platform Support
 
-| Platform | npm package | Status |
+| Platform | Native binary source | Status |
 | --- | --- | --- |
-| MacOS arm64 | `best-claude-hud-darwin-arm64` | Supported |
-| MacOS x64 | `best-claude-hud-darwin-x64` | Supported |
-| Linux x64 musl | `best-claude-hud-linux-x64-musl` | Supported |
-| Windows x64 | `best-claude-hud-win32-x64` | Supported |
+| MacOS arm64 | `@gaossr/best-claude-hud@<version>-darwin-arm64` via npm alias | Supported |
+| MacOS x64 | `@gaossr/best-claude-hud@<version>-darwin-x64` via npm alias | Supported |
+| Linux x64 musl | `@gaossr/best-claude-hud@<version>-linux-x64` via npm alias | Supported |
+| Windows x64 | `@gaossr/best-claude-hud@<version>-win32-x64` via npm alias | Supported |
 | Linux arm64 / Windows arm64 | - | Planned |
 
 ## Requirements
@@ -267,17 +267,20 @@ cargo clippy -- -D warnings
 cargo test
 cargo build --release
 cargo run -- --help
-node npm/scripts/prepare-packages.js 0.1.0
+npm --prefix packaging/npm run check
+npm --prefix packaging/npm run test
 ```
 
 Useful release checks:
 
 ```bash
 cargo build --release
-cp target/release/best-claude-hud npm-publish/darwin-arm64/best-claude-hud
-chmod +x npm-publish/darwin-arm64/best-claude-hud
-(cd npm-publish/darwin-arm64 && npm pack --dry-run)
-(cd npm-publish/main && npm pack --dry-run)
+mkdir -p release-artifacts
+tar -C target/release -czf release-artifacts/best-claude-hud-darwin-arm64.tar.gz best-claude-hud
+node packaging/npm/scripts/build-packages.js \
+  --version 0.1.2 \
+  --release-dir release-artifacts \
+  --output-dir npm-tarballs
 ```
 
 ## Release
@@ -290,14 +293,14 @@ Release is split into two workflows:
 Create a GitHub Release:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.1.2
+git push origin v0.1.2
 ```
 
-Publish to npm after npm trusted publishing or `NPM_TOKEN` is configured:
+Publish to npm after npm trusted publishing is configured:
 
 ```bash
-gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.0
+gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.2
 ```
 
 ## Project Resources
