@@ -45,7 +45,7 @@ jobs:
             best-claude-hud-linux-x64-musl \
             best-claude-hud-win32-x64
           do
-            npm publish "npm-tarballs/${package_name}-${VERSION}.tgz" \
+            npm publish "./npm-tarballs/${package_name}-${VERSION}.tgz" \
               --provenance \
               --access public \
               --registry https://registry.npmjs.org
@@ -56,7 +56,7 @@ jobs:
           VERSION: ${{ inputs.version }}
         run: |
           VERSION="${VERSION#v}"
-          npm publish "npm-tarballs/best-claude-hud-${VERSION}.tgz" \
+          npm publish "./npm-tarballs/best-claude-hud-${VERSION}.tgz" \
             --provenance \
             --access public \
             --registry https://registry.npmjs.org
