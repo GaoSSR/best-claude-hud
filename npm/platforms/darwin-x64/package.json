@@ -1,7 +1,7 @@
 {
   "name": "best-claude-hud-darwin-x64",
   "version": "0.0.0",
-  "description": "macOS x64 binary for Best Claude HUD",
+  "description": "macOS x64 binary for best-claude-hud",
   "files": ["best-claude-hud"],
   "os": ["darwin"],
   "cpu": ["x64"],
@@ -10,5 +10,5 @@
     "url": "https://github.com/GaoSSR/best-claude-hud"
   },
   "author": "GaoSSR",
-  "license": "MIT"
+  "license": "Apache-2.0"
 }

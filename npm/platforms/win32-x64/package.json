@@ -1,7 +1,7 @@
 {
   "name": "best-claude-hud-win32-x64",
   "version": "0.0.0",
-  "description": "Windows x64 binary for Best Claude HUD",
+  "description": "Windows x64 binary for best-claude-hud",
   "files": ["best-claude-hud.exe"],
   "os": ["win32"],
   "cpu": ["x64"],
@@ -10,5 +10,5 @@
     "url": "https://github.com/GaoSSR/best-claude-hud"
   },
   "author": "GaoSSR",
-  "license": "MIT"
+  "license": "Apache-2.0"
 }

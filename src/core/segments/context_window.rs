@@ -241,4 +241,29 @@ mod tests {
         let missing = std::env::temp_dir().join("best-claude-hud-missing.jsonl");
         assert_eq!(parse_transcript_usage(missing), None);
     }
+
+    #[test]
+    fn new_session_does_not_inherit_tokens_from_old_sibling_transcripts() {
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let dir = std::env::temp_dir().join(format!("best-claude-hud-session-{nanos}"));
+        std::fs::create_dir_all(&dir).unwrap();
+
+        let old_transcript = dir.join("old-session.jsonl");
+        std::fs::write(
+            &old_transcript,
+            r#"{"type":"assistant","message":{"usage":{"input_tokens":88888},"stop_reason":"end_turn"}}"#,
+        )
+        .unwrap();
+
+        let new_transcript = dir.join("new-terminal-session.jsonl");
+        let usage = parse_transcript_usage(&new_transcript);
+
+        std::fs::remove_file(old_transcript).unwrap();
+        std::fs::remove_dir(dir).unwrap();
+
+        assert_eq!(usage, None);
+    }
 }

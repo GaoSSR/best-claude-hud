@@ -2,7 +2,7 @@ use clap::Parser;
 
 #[derive(Parser, Debug)]
 #[command(name = "best-claude-hud")]
-#[command(version, about = "High-performance Claude Code StatusLine")]
+#[command(version, about = "Minimal Claude Code statusline HUD")]
 pub struct Cli {
     /// Enter TUI configuration mode
     #[arg(short = 'c', long = "config")]

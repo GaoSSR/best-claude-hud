@@ -8,6 +8,12 @@ Minimal Claude Code statusline HUD written in Rust.
 npm install -g best-claude-hud
 ```
 
+Update:
+
+```bash
+npm update -g best-claude-hud
+```
+
 ## Features
 
 - 🚀 **Fast**: Written in Rust for maximum performance
@@ -37,6 +43,8 @@ You can also use it directly:
 ```bash
 best-claude-hud --help
 best-claude-hud --version
+best-claude-hud --config
+best-claude-hud --theme minimal
 ```
 
 ## For Users in China
@@ -51,4 +59,4 @@ npm install -g best-claude-hud --registry https://registry.npmmirror.com
 
 - GitHub: https://github.com/GaoSSR/best-claude-hud
 - Issues: https://github.com/GaoSSR/best-claude-hud/issues
-- License: MIT
+- License: Apache-2.0

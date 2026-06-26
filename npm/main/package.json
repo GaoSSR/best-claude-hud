@@ -1,7 +1,7 @@
 {
   "name": "best-claude-hud",
   "version": "0.0.0",
-  "description": "Best Claude HUD - High-performance Claude Code StatusLine tool",
+  "description": "Minimal Claude Code statusline HUD powered by Rust",
   "bin": {
     "best-claude-hud": "./bin/best-claude-hud.js"
   },
@@ -18,7 +18,7 @@
   },
   "keywords": ["claude", "statusline", "claude-code", "rust", "cli"],
   "author": "GaoSSR",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "engines": {
     "node": ">=18.0.0"
   }

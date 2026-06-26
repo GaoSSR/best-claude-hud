@@ -217,7 +217,7 @@ impl MainMenu {
             ]),
             Line::from(""),
             Line::from(Span::styled(
-                "High-performance Claude Code StatusLine Configuration",
+                "Minimal Claude Code statusline HUD Configuration",
                 Style::default().fg(Color::Gray),
             )),
         ]);
