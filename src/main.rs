@@ -12,6 +12,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Ok(());
     }
 
+    if cli.setup {
+        let settings_path = best_claude_hud::utils::install_statusline()?;
+        println!(
+            "Configured Claude Code statusLine in {}",
+            settings_path.display()
+        );
+        println!("Restart Claude Code for the statusline to take effect.");
+        return Ok(());
+    }
+
     // Handle Claude Code patcher
     if let Some(claude_path) = cli.patch {
         use best_claude_hud::utils::ClaudeCodePatcher;

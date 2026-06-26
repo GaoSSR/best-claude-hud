@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.5 - 2026-06-26
+
+- Add `best-claude-hud --setup` to configure Claude Code `statusLine`
+  automatically.
+- Document the one-line install plus setup flow so users do not have to edit
+  `~/.claude/settings.json` manually.
+
 ## 0.1.4 - 2026-06-26
 
 - Make the unscoped `best-claude-hud` npm package the only documented install

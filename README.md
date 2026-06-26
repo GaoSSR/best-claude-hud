@@ -52,6 +52,16 @@ Accepted in the initial rebuild:
 
 `best-claude-hud` is distributed through npm. The npm package uses prebuilt native binaries; users do not need Rust installed.
 
+Install and configure Claude Code in one line:
+
+```bash
+npm install -g best-claude-hud && best-claude-hud --setup
+```
+
+Restart Claude Code after setup. Existing sessions do not automatically reload `~/.claude/settings.json`.
+
+Install only:
+
 ```bash
 npm install -g best-claude-hud
 ```
@@ -66,7 +76,7 @@ pnpm add -g best-claude-hud
 For users in China:
 
 ```bash
-npm install -g best-claude-hud --registry https://registry.npmmirror.com
+npm install -g best-claude-hud --registry https://registry.npmmirror.com && best-claude-hud --setup
 ```
 
 Update an existing installation:
@@ -83,17 +93,27 @@ npm uninstall -g best-claude-hud
 
 ## Claude Code Configuration
 
-Add this to your Claude Code `~/.claude/settings.json`:
+`npm install -g best-claude-hud` only installs the command. Claude Code will not show the HUD until `statusLine` is configured.
+
+Recommended:
+
+```bash
+best-claude-hud --setup
+```
+
+The setup command writes a `statusLine` block to `~/.claude/settings.json` and preserves existing settings. It resolves the installed command to an absolute path when possible:
 
 ```json
 {
   "statusLine": {
     "type": "command",
-    "command": "best-claude-hud",
+    "command": "/path/to/best-claude-hud",
     "padding": 0
   }
 }
 ```
+
+Manual configuration can also use `"command": "best-claude-hud"` if your Claude Code sessions inherit the same PATH as your shell. If `statusLine` already exists, `--setup` creates a timestamped backup next to `settings.json` before replacing it. Restart Claude Code after changing this file.
 
 The npm package intentionally does not install a binary into `~/.claude`. It uses the global npm command and resolves the matching native binary from Kiri-style npm alias optional dependencies.
 
@@ -103,6 +123,7 @@ The npm package intentionally does not install a binary into `~/.claude`. It use
 best-claude-hud                    # open the interactive menu when run in a terminal
 best-claude-hud --help             # print command help
 best-claude-hud --version          # print version
+best-claude-hud --setup            # configure Claude Code statusLine
 best-claude-hud --config           # open the TUI configuration interface
 best-claude-hud --theme minimal    # temporarily render with a built-in theme
 best-claude-hud --patch <cli.js>   # patch Claude Code cli.js context warnings
@@ -278,7 +299,7 @@ cargo build --release
 mkdir -p release-artifacts
 tar -C target/release -czf release-artifacts/best-claude-hud-darwin-arm64.tar.gz best-claude-hud
 node packaging/npm/scripts/build-packages.js \
-  --version 0.1.4 \
+  --version 0.1.5 \
   --release-dir release-artifacts \
   --output-dir npm-tarballs
 ```
@@ -293,14 +314,14 @@ Release is split into two workflows:
 Create a GitHub Release:
 
 ```bash
-git tag v0.1.4
-git push origin v0.1.4
+git tag v0.1.5
+git push origin v0.1.5
 ```
 
 Publish to npm after npm trusted publishing is configured:
 
 ```bash
-gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.4
+gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.5
 ```
 
 ## Project Resources

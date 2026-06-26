@@ -12,6 +12,10 @@ pub struct Cli {
     #[arg(short = 't', long = "theme")]
     pub theme: Option<String>,
 
+    /// Configure Claude Code to use best-claude-hud as the statusline command
+    #[arg(long = "setup")]
+    pub setup: bool,
+
     /// Patch Claude Code cli.js to disable context warnings
     #[arg(long = "patch")]
     pub patch: Option<String>,
