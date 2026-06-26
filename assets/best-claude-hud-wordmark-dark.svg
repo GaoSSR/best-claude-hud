@@ -1,5 +1,0 @@
-<svg width="860" height="140" viewBox="0 0 860 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="best-claude-hud">
-  <rect width="860" height="140" fill="none"/>
-  <text x="430" y="88" text-anchor="middle" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="58" font-weight="700" fill="#f9fafb">best-claude-hud</text>
-  <text x="430" y="120" text-anchor="middle" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="18" fill="#94a3b8">minimal Claude Code statusline HUD</text>
-</svg>

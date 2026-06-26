@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1 - 2026-06-26
+
+- Publish the first npm registry version of `best-claude-hud`.
+- Replace temporary README logo assets with the generated project logo.
+- Align release metadata and npm publishing workflow for the public package.
+
 ## 0.1.0 - 2026-06-26
 
 - Start `best-claude-hud` from the `Haleclipse/CCometixLine` source snapshot.

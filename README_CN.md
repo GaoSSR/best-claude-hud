@@ -1,27 +1,10 @@
 <h4 align="right"><a href="./README.md">English</a> | <strong><a href="./README_CN.md">简体中文</a></strong></h4>
 
-<p>
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/best-claude-hud-logo.svg">
-    <source media="(prefers-color-scheme: light)" srcset="assets/best-claude-hud-logo.svg">
-    <img align="right" src="assets/best-claude-hud-logo.svg" alt="best-claude-hud logo" width="360">
-  </picture>
-</p>
-
-<br />
-<br />
-
 <p align="center">
   <a href="https://github.com/GaoSSR/best-claude-hud">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="assets/best-claude-hud-wordmark-dark.svg">
-      <source media="(prefers-color-scheme: light)" srcset="assets/best-claude-hud-wordmark-light.svg">
-      <img src="assets/best-claude-hud-wordmark-light.svg" alt="best-claude-hud" height="74">
-    </picture>
+    <img src="assets/best-claude-hud-logo.png" alt="best-claude-hud" width="560">
   </a>
 </p>
-
-<br clear="right" />
 
 <h3 align="center"><nobr>极简 Claude Code 状态栏 HUD，由 Rust 驱动</nobr></h3>
 

@@ -164,9 +164,9 @@ jobs:
           draft: false
           prerelease: false
           body: |
-            ## best-claude-hud v0.1.0
+            ## best-claude-hud ${{ github.ref_name }}
 
-            First public release of `best-claude-hud`, a minimal Claude Code statusline HUD powered by Rust.
+            Public release of `best-claude-hud`, a minimal Claude Code statusline HUD powered by Rust.
 
             ### Highlights
 

@@ -35,7 +35,6 @@ jobs:
 
       - name: Publish platform packages
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           VERSION: ${{ inputs.version }}
         run: |
           set -euo pipefail
@@ -46,13 +45,18 @@ jobs:
             best-claude-hud-linux-x64-musl \
             best-claude-hud-win32-x64
           do
-            npm publish "npm-tarballs/${package_name}-${VERSION}.tgz" --provenance --access public
+            npm publish "npm-tarballs/${package_name}-${VERSION}.tgz" \
+              --provenance \
+              --access public \
+              --registry https://registry.npmjs.org
           done
 
       - name: Publish root package
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           VERSION: ${{ inputs.version }}
         run: |
           VERSION="${VERSION#v}"
-          npm publish "npm-tarballs/best-claude-hud-${VERSION}.tgz" --provenance --access public
+          npm publish "npm-tarballs/best-claude-hud-${VERSION}.tgz" \
+            --provenance \
+            --access public \
+            --registry https://registry.npmjs.org
