@@ -1,0 +1,14 @@
+{
+  "name": "best-claude-hud-darwin-arm64",
+  "version": "0.0.0",
+  "description": "macOS ARM64 binary for Best Claude HUD",
+  "files": ["best-claude-hud"],
+  "os": ["darwin"],
+  "cpu": ["arm64"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GaoSSR/best-claude-hud"
+  },
+  "author": "GaoSSR",
+  "license": "MIT"
+}

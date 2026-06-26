@@ -1,0 +1,167 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to package, for example 0.1.0"
+        required: false
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: aarch64-apple-darwin
+            os: macos-14
+            archive: best-claude-hud-darwin-arm64.tar.gz
+          - target: x86_64-apple-darwin
+            os: macos-15-intel
+            archive: best-claude-hud-darwin-x64.tar.gz
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+            archive: best-claude-hud-linux-x64-musl.tar.gz
+            musl: true
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            archive: best-claude-hud-win32-x64.zip
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Install musl tools
+        if: matrix.musl == true
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y musl-tools
+
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Package Unix
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p dist
+          cp "target/${{ matrix.target }}/release/best-claude-hud" dist/best-claude-hud
+          tar -C dist -czf "${{ matrix.archive }}" best-claude-hud
+          if command -v shasum >/dev/null 2>&1; then
+            shasum -a 256 "${{ matrix.archive }}" > "${{ matrix.archive }}.sha256"
+          else
+            sha256sum "${{ matrix.archive }}" > "${{ matrix.archive }}.sha256"
+          fi
+
+      - name: Package Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Copy-Item "target/${{ matrix.target }}/release/best-claude-hud.exe" "dist/best-claude-hud.exe"
+          Compress-Archive -Path "dist/best-claude-hud.exe" -DestinationPath "${{ matrix.archive }}" -Force
+          $hash = Get-FileHash -Algorithm SHA256 "${{ matrix.archive }}"
+          "$($hash.Hash.ToLower())  ${{ matrix.archive }}" | Out-File "${{ matrix.archive }}.sha256" -Encoding ascii
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.archive }}
+          path: |
+            ${{ matrix.archive }}
+            ${{ matrix.archive }}.sha256
+
+  npm-packages:
+    name: Build npm tarballs
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Download release archives
+        uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts
+          merge-multiple: true
+
+      - name: Prepare npm packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -n "${{ inputs.version }}" ]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          VERSION="${VERSION#v}"
+
+          node npm/scripts/prepare-packages.js "$VERSION"
+
+          mkdir -p extracted/darwin-arm64 extracted/darwin-x64 extracted/linux-x64-musl extracted/win32-x64
+          tar -xzf release-artifacts/best-claude-hud-darwin-arm64.tar.gz -C extracted/darwin-arm64
+          tar -xzf release-artifacts/best-claude-hud-darwin-x64.tar.gz -C extracted/darwin-x64
+          tar -xzf release-artifacts/best-claude-hud-linux-x64-musl.tar.gz -C extracted/linux-x64-musl
+          unzip -q release-artifacts/best-claude-hud-win32-x64.zip -d extracted/win32-x64
+
+          cp extracted/darwin-arm64/best-claude-hud npm-publish/darwin-arm64/best-claude-hud
+          cp extracted/darwin-x64/best-claude-hud npm-publish/darwin-x64/best-claude-hud
+          cp extracted/linux-x64-musl/best-claude-hud npm-publish/linux-x64-musl/best-claude-hud
+          cp extracted/win32-x64/best-claude-hud.exe npm-publish/win32-x64/best-claude-hud.exe
+          chmod +x npm-publish/darwin-arm64/best-claude-hud
+          chmod +x npm-publish/darwin-x64/best-claude-hud
+          chmod +x npm-publish/linux-x64-musl/best-claude-hud
+
+          mkdir -p npm-tarballs
+          for package_dir in darwin-arm64 darwin-x64 linux-x64-musl win32-x64 main; do
+            (cd "npm-publish/${package_dir}" && npm pack --pack-destination ../../npm-tarballs)
+          done
+          (cd npm-tarballs && for file in *.tgz; do sha256sum "$file" > "$file.sha256"; done)
+
+      - name: Upload npm tarballs
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-tarballs
+          path: npm-tarballs/*
+
+  github-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build, npm-packages]
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-assets/**/*
+          draft: false
+          prerelease: false
+          body: |
+            Initial best-claude-hud release assets.

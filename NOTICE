@@ -1,0 +1,14 @@
+best-claude-hud
+Copyright (c) 2026 GaoSSR
+
+This project is derived from and inspired by Haleclipse/CCometixLine:
+https://github.com/Haleclipse/CCometixLine
+
+The upstream Cargo metadata declares the original project as MIT licensed.
+Substantial portions of the initial Rust source, TUI configuration structure,
+theme definitions, and npm platform packaging approach are adapted from that
+project.
+
+Upstream project attribution:
+Haleclipse/CCometixLine
+Copyright (c) Haleclipse and contributors
