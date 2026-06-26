@@ -24,7 +24,7 @@
 This project starts from the source code of [`Haleclipse/CCometixLine`](https://github.com/Haleclipse/CCometixLine), then rebuilds the project under a new repository, package name, release workflow, and maintenance direction. The default goal is a compact single-line HUD, not a noisy multi-line dashboard.
 
 <p align="center">
-  <img src="assets/img1.png" alt="best-claude-hud statusline preview" width="880">
+  <img src="assets/best-claude-hud-preview.png" alt="best-claude-hud statusline preview" width="880">
 </p>
 
 The default statusline focuses on:

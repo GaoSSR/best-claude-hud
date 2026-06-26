@@ -47,6 +47,25 @@ jobs:
         with:
           targets: ${{ matrix.target }}
 
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-${{ matrix.target }}-release-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Fetch dependencies
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            cargo fetch --target "${{ matrix.target }}" && exit 0
+            echo "cargo fetch failed on attempt ${attempt}; retrying..."
+            sleep $((attempt * 10))
+          done
+          cargo fetch --target "${{ matrix.target }}"
+
       - name: Install musl tools
         if: matrix.musl == true
         run: |
@@ -170,5 +189,5 @@ jobs:
             ### Install
 
             ```bash
-            npm install -g @gaossr/best-claude-hud
+            npm install -g best-claude-hud
             ```

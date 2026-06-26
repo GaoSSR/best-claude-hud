@@ -24,7 +24,7 @@
 本项目基于 [`Haleclipse/CCometixLine`](https://github.com/Haleclipse/CCometixLine) 的源代码重建，但使用新的仓库、包名、发布流程和维护策略。默认目标是紧凑的单行 HUD，而不是高密度、多行、污染屏幕的信息面板。
 
 <p align="center">
-  <img src="assets/img1.png" alt="best-claude-hud statusline preview" width="880">
+  <img src="assets/best-claude-hud-preview.png" alt="best-claude-hud statusline preview" width="880">
 </p>
 
 默认状态栏关注：
