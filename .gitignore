@@ -2,6 +2,7 @@
 /npm-publish
 /npm-tarballs
 /release-artifacts
+.DS_Store
 
 # Documentation and development files
 claude-powerline-features.md

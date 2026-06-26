@@ -2,9 +2,9 @@
 
 <p>
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/best-claude-hud-logo-placeholder.svg">
-    <source media="(prefers-color-scheme: light)" srcset="assets/best-claude-hud-logo-placeholder.svg">
-    <img align="right" src="assets/best-claude-hud-logo-placeholder.svg" alt="best-claude-hud logo placeholder" width="360">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/best-claude-hud-logo.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/best-claude-hud-logo.svg">
+    <img align="right" src="assets/best-claude-hud-logo.svg" alt="best-claude-hud logo" width="360">
   </picture>
 </p>
 
@@ -316,14 +316,6 @@ Publish to npm after npm trusted publishing or `NPM_TOKEN` is configured:
 ```bash
 gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.0
 ```
-
-## Logo Prompt
-
-The current README uses placeholder logo assets. Use [docs/logo-prompt.md](./docs/logo-prompt.md) to generate the final project logo and then replace:
-
-- `assets/best-claude-hud-logo-placeholder.svg`
-- `assets/best-claude-hud-wordmark-light.svg`
-- `assets/best-claude-hud-wordmark-dark.svg`
 
 ## Project Resources
 

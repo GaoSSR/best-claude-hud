@@ -2,9 +2,9 @@
 
 <p>
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/best-claude-hud-logo-placeholder.svg">
-    <source media="(prefers-color-scheme: light)" srcset="assets/best-claude-hud-logo-placeholder.svg">
-    <img align="right" src="assets/best-claude-hud-logo-placeholder.svg" alt="best-claude-hud logo placeholder" width="360">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/best-claude-hud-logo.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/best-claude-hud-logo.svg">
+    <img align="right" src="assets/best-claude-hud-logo.svg" alt="best-claude-hud logo" width="360">
   </picture>
 </p>
 
@@ -316,14 +316,6 @@ npm trusted publishing 或 `NPM_TOKEN` 配置完成后发布：
 ```bash
 gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.0
 ```
-
-## Logo 生图提示词
-
-当前 README 使用占位 Logo。请使用 [docs/logo-prompt.md](./docs/logo-prompt.md) 生成最终项目 Logo，然后替换：
-
-- `assets/best-claude-hud-logo-placeholder.svg`
-- `assets/best-claude-hud-wordmark-light.svg`
-- `assets/best-claude-hud-wordmark-dark.svg`
 
 ## 项目资源
 

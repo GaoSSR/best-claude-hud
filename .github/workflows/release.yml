@@ -164,4 +164,21 @@ jobs:
           draft: false
           prerelease: false
           body: |
-            Initial best-claude-hud release assets.
+            ## best-claude-hud v0.1.0
+
+            First public release of `best-claude-hud`, a minimal Claude Code statusline HUD powered by Rust.
+
+            ### Highlights
+
+            - npm-first installation with platform-specific native binaries.
+            - Compact Claude Code statusline focused on model, workspace, Git state, and context usage.
+            - Context window parsing avoids reusing stale token data from older terminal sessions.
+            - Claude Code `model` input supports both string and object forms.
+            - `rate_limits` are read from Claude Code statusLine stdin before API fallback.
+            - Project license is Apache-2.0 with upstream attribution preserved in `NOTICE`.
+
+            ### Install
+
+            ```bash
+            npm install -g best-claude-hud
+            ```
