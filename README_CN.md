@@ -53,32 +53,32 @@
 `best-claude-hud` 通过 npm 分发。npm 包使用预构建原生二进制，用户不需要本地安装 Rust。
 
 ```bash
-npm install -g @gaossr/best-claude-hud
+npm install -g best-claude-hud
 ```
 
 使用 yarn 或 pnpm：
 
 ```bash
-yarn global add @gaossr/best-claude-hud
-pnpm add -g @gaossr/best-claude-hud
+yarn global add best-claude-hud
+pnpm add -g best-claude-hud
 ```
 
 国内网络可使用 npm 镜像：
 
 ```bash
-npm install -g @gaossr/best-claude-hud --registry https://registry.npmmirror.com
+npm install -g best-claude-hud --registry https://registry.npmmirror.com
 ```
 
 更新：
 
 ```bash
-npm update -g @gaossr/best-claude-hud
+npm update -g best-claude-hud
 ```
 
 卸载：
 
 ```bash
-npm uninstall -g @gaossr/best-claude-hud
+npm uninstall -g best-claude-hud
 ```
 
 ## Claude Code 配置
@@ -244,10 +244,10 @@ patcher 会在写入前创建同目录备份文件。
 
 | 平台 | 原生二进制来源 | 状态 |
 | --- | --- | --- |
-| MacOS arm64 | 通过 npm alias 安装 `@gaossr/best-claude-hud@<version>-darwin-arm64` | 支持 |
-| MacOS x64 | 通过 npm alias 安装 `@gaossr/best-claude-hud@<version>-darwin-x64` | 支持 |
-| Linux x64 musl | 通过 npm alias 安装 `@gaossr/best-claude-hud@<version>-linux-x64` | 支持 |
-| Windows x64 | 通过 npm alias 安装 `@gaossr/best-claude-hud@<version>-win32-x64` | 支持 |
+| MacOS arm64 | npm 自动选择原生二进制 | 支持 |
+| MacOS x64 | npm 自动选择原生二进制 | 支持 |
+| Linux x64 musl | npm 自动选择原生二进制 | 支持 |
+| Windows x64 | npm 自动选择原生二进制 | 支持 |
 | Linux arm64 / Windows arm64 | - | 计划中 |
 
 ## 系统要求
@@ -278,7 +278,7 @@ cargo build --release
 mkdir -p release-artifacts
 tar -C target/release -czf release-artifacts/best-claude-hud-darwin-arm64.tar.gz best-claude-hud
 node packaging/npm/scripts/build-packages.js \
-  --version 0.1.3 \
+  --version 0.1.4 \
   --release-dir release-artifacts \
   --output-dir npm-tarballs
 ```
@@ -293,14 +293,14 @@ node packaging/npm/scripts/build-packages.js \
 创建 GitHub Release：
 
 ```bash
-git tag v0.1.3
-git push origin v0.1.3
+git tag v0.1.4
+git push origin v0.1.4
 ```
 
 npm trusted publishing 配置完成后发布：
 
 ```bash
-gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.3
+gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.4
 ```
 
 ## 项目资源

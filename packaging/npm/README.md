@@ -1,17 +1,17 @@
-# @gaossr/best-claude-hud
+# best-claude-hud
 
 Minimal Claude Code statusline HUD powered by Rust.
 
 ## Install
 
 ```bash
-npm install -g @gaossr/best-claude-hud
+npm install -g best-claude-hud
 ```
 
 For users in China:
 
 ```bash
-npm install -g @gaossr/best-claude-hud --registry https://registry.npmmirror.com
+npm install -g best-claude-hud --registry https://registry.npmmirror.com
 ```
 
 ## Claude Code Configuration

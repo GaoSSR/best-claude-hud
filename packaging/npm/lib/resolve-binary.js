@@ -5,19 +5,19 @@ const path = require("node:path");
 
 const PLATFORMS = {
   "darwin-arm64": {
-    alias: "@gaossr/best-claude-hud-darwin-arm64",
+    alias: "best-claude-hud-darwin-arm64",
     binary: "best-claude-hud",
   },
   "darwin-x64": {
-    alias: "@gaossr/best-claude-hud-darwin-x64",
+    alias: "best-claude-hud-darwin-x64",
     binary: "best-claude-hud",
   },
   "linux-x64": {
-    alias: "@gaossr/best-claude-hud-linux-x64",
+    alias: "best-claude-hud-linux-x64",
     binary: "best-claude-hud",
   },
   "win32-x64": {
-    alias: "@gaossr/best-claude-hud-win32-x64",
+    alias: "best-claude-hud-win32-x64",
     binary: "best-claude-hud.exe",
   },
 };
@@ -46,7 +46,7 @@ function resolveBinary(options = {}) {
   const packageJsonPath = resolvePackageJson(platform.alias);
   if (!packageJsonPath) {
     throw new Error(
-      `Missing optional dependency ${platform.alias}. Reinstall with: npm install -g @gaossr/best-claude-hud`
+      `Missing optional dependency ${platform.alias}. Reinstall with: npm install -g best-claude-hud`
     );
   }
 

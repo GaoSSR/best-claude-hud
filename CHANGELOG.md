@@ -1,15 +1,22 @@
 # Changelog
 
+## 0.1.4 - 2026-06-26
+
+- Make the unscoped `best-claude-hud` npm package the only documented install
+  entry.
+- Publish platform binaries as prerelease versions of the unscoped package and
+  keep platform packages internal through npm alias optional dependencies.
+
 ## 0.1.3 - 2026-06-26
 
-- Publish the scoped npm package through GitHub Actions trusted publishing.
+- Publish the previous scoped npm package through GitHub Actions trusted
+  publishing.
 - Keep npm distribution aligned with the Kiri-style single scoped package
   layout.
 
 ## 0.1.2 - 2026-06-26
 
-- Migrate npm distribution to the Kiri-style scoped package
-  `@gaossr/best-claude-hud`.
+- Migrate npm distribution to the Kiri-style scoped package layout.
 - Package platform binaries as prerelease versions of the same npm package and
   install them through npm alias optional dependencies.
 - Replace the old multi-package npm build scripts with `packaging/npm`.

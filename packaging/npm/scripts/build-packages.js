@@ -14,7 +14,7 @@ const PLATFORMS = [
   {
     key: "darwin-arm64",
     target: "aarch64-apple-darwin",
-    alias: "@gaossr/best-claude-hud-darwin-arm64",
+    alias: "best-claude-hud-darwin-arm64",
     os: "darwin",
     cpu: "arm64",
     archiveName: "best-claude-hud-darwin-arm64.tar.gz",
@@ -23,7 +23,7 @@ const PLATFORMS = [
   {
     key: "darwin-x64",
     target: "x86_64-apple-darwin",
-    alias: "@gaossr/best-claude-hud-darwin-x64",
+    alias: "best-claude-hud-darwin-x64",
     os: "darwin",
     cpu: "x64",
     archiveName: "best-claude-hud-darwin-x64.tar.gz",
@@ -32,7 +32,7 @@ const PLATFORMS = [
   {
     key: "linux-x64",
     target: "x86_64-unknown-linux-musl",
-    alias: "@gaossr/best-claude-hud-linux-x64",
+    alias: "best-claude-hud-linux-x64",
     os: "linux",
     cpu: "x64",
     archiveName: "best-claude-hud-linux-x64-musl.tar.gz",
@@ -41,7 +41,7 @@ const PLATFORMS = [
   {
     key: "win32-x64",
     target: "x86_64-pc-windows-msvc",
-    alias: "@gaossr/best-claude-hud-win32-x64",
+    alias: "best-claude-hud-win32-x64",
     os: "win32",
     cpu: "x64",
     archiveName: "best-claude-hud-win32-x64.zip",
