@@ -91,6 +91,55 @@ npm update -g best-claude-hud
 npm uninstall -g best-claude-hud
 ```
 
+## Nix
+
+`best-claude-hud` 也提供 Nix flake，适合声明式、可复现环境。
+
+不全局安装，直接运行：
+
+```bash
+nix run github:GaoSSR/best-claude-hud -- --help
+```
+
+安装到 Nix profile：
+
+```bash
+nix profile install github:GaoSSR/best-claude-hud
+best-claude-hud --setup
+```
+
+如果使用 home-manager 或其他声明式配置，可以让 Claude Code 直接指向 Nix store 中的二进制：
+
+```nix
+# 在你的 flake inputs 中添加：
+# best-claude-hud.url = "github:GaoSSR/best-claude-hud";
+
+{ inputs, pkgs, ... }:
+
+let
+  hud = inputs.best-claude-hud.packages.${pkgs.system}.default;
+in
+{
+  home.packages = [ hud ];
+
+  home.file.".claude/settings.json".text = builtins.toJSON {
+    statusLine = {
+      type = "command";
+      command = "${hud}/bin/best-claude-hud";
+      padding = 0;
+    };
+  };
+}
+```
+
+如果你已经用 Nix 管理 `~/.claude/settings.json`，请把上面的 `statusLine` 合并进现有 JSON，不要直接替换整个文件。
+
+开发环境：
+
+```bash
+nix develop
+```
+
 ## Claude Code 配置
 
 `npm install -g best-claude-hud` 只会安装命令本身。Claude Code 不会自动调用它，必须配置 `statusLine` 后才会显示 HUD。

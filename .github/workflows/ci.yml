@@ -46,6 +46,22 @@ jobs:
       - name: CLI smoke test
         run: cargo run -- --help
 
+  nix:
+    name: Nix flake
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v22
+
+      - name: Check flake
+        run: nix flake check --print-build-logs
+
+      - name: Build package
+        run: nix build .#default --print-build-logs
+
   build:
     name: Build (${{ matrix.os }})
     runs-on: ${{ matrix.os }}

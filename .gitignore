@@ -2,6 +2,8 @@
 /npm-publish
 /npm-tarballs
 /release-artifacts
+/result
+/result-*
 .DS_Store
 
 # Documentation and development files

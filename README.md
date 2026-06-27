@@ -91,6 +91,55 @@ Uninstall:
 npm uninstall -g best-claude-hud
 ```
 
+## Nix
+
+`best-claude-hud` also ships a Nix flake for declarative and reproducible environments.
+
+Run without installing globally:
+
+```bash
+nix run github:GaoSSR/best-claude-hud -- --help
+```
+
+Install into a Nix profile:
+
+```bash
+nix profile install github:GaoSSR/best-claude-hud
+best-claude-hud --setup
+```
+
+For home-manager or another declarative setup, point Claude Code directly at the Nix store binary:
+
+```nix
+# In your flake inputs:
+# best-claude-hud.url = "github:GaoSSR/best-claude-hud";
+
+{ inputs, pkgs, ... }:
+
+let
+  hud = inputs.best-claude-hud.packages.${pkgs.system}.default;
+in
+{
+  home.packages = [ hud ];
+
+  home.file.".claude/settings.json".text = builtins.toJSON {
+    statusLine = {
+      type = "command";
+      command = "${hud}/bin/best-claude-hud";
+      padding = 0;
+    };
+  };
+}
+```
+
+If you already manage `~/.claude/settings.json` with Nix, merge the `statusLine` block into your existing JSON instead of replacing the whole file.
+
+Development shell:
+
+```bash
+nix develop
+```
+
 ## Claude Code Configuration
 
 `npm install -g best-claude-hud` only installs the command. Claude Code will not show the HUD until `statusLine` is configured.

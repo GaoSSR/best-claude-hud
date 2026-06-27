@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Add Nix flake packaging and development shell support.
+- Run Nix flake checks in CI.
+- Optimize release builds for smaller native binaries.
+
 ## 0.1.5 - 2026-06-26
 
 - Add `best-claude-hud --setup` to configure Claude Code `statusLine`
