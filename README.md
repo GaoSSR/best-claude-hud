@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/GaoSSR/best-claude-hud">
-    <img src="assets/best-claude-hud-logo.png" alt="best-claude-hud" width="720">
+    <img src="assets/best-claude-hud-logo.png" alt="best-claude-hud" width="480">
   </a>
 </p>
 
