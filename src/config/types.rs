@@ -126,6 +126,17 @@ impl<'de> Deserialize<'de> for Model {
 #[derive(Deserialize)]
 pub struct Workspace {
     pub current_dir: String,
+    #[serde(default)]
+    pub project_dir: Option<String>,
+}
+
+impl Workspace {
+    pub fn project_directory(&self) -> &str {
+        self.project_dir
+            .as_deref()
+            .filter(|path| !path.trim().is_empty())
+            .unwrap_or(&self.current_dir)
+    }
 }
 
 #[derive(Deserialize)]

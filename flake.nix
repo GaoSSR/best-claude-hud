@@ -78,6 +78,8 @@
               allowBuiltinFetchGit = true;
             };
 
+            nativeCheckInputs = [ pkgs.gitMinimal ];
+
             # Disable cargo-auditable until https://github.com/rust-secure-code/cargo-auditable/issues/124 is fixed.
             auditable = false;
 

@@ -181,6 +181,7 @@ jobs:
 
             - npm-first installation with platform-specific native binaries.
             - Compact Claude Code statusline focused on model, workspace, Git state, and context usage.
+            - Workspace and Git status remain anchored to the Claude Code launch directory when skills, subagents, or shell commands change the temporary working directory.
             - Context window parsing avoids reusing stale token data from older terminal sessions.
             - Claude Code `model` input supports both string and object forms.
             - `rate_limits` are read from Claude Code statusLine stdin before API fallback.

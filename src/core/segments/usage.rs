@@ -356,6 +356,7 @@ mod tests {
             },
             workspace: Workspace {
                 current_dir: "/tmp/project".to_string(),
+                project_dir: None,
             },
             transcript_path: "/tmp/missing.jsonl".to_string(),
             cost: None,

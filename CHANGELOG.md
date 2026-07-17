@@ -1,10 +1,15 @@
 # Changelog
 
-## Unreleased
+## 0.1.6 - 2026-07-18
 
 - Add Nix flake packaging and development shell support.
 - Run Nix flake checks in CI.
 - Optimize release builds for smaller native binaries.
+- Keep the displayed workspace and Git status anchored to Claude Code's launch
+  directory when skills, subagents, or shell commands change the temporary
+  working directory.
+- Fall back to `workspace.current_dir` for older Claude Code versions that do
+  not provide `workspace.project_dir`.
 
 ## 0.1.5 - 2026-06-26
 

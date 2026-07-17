@@ -30,7 +30,7 @@
 默认状态栏关注：
 
 - Claude 模型显示
-- 当前工作目录
+- Claude Code 启动时的项目目录，不受临时工作目录变化影响
 - Git 分支、clean/dirty/conflict 状态和 ahead/behind 计数
 - 当前 Claude Code transcript 的 context window token 占用
 - 可选的 usage/rate-limit、cost、session、output style 段落
@@ -46,6 +46,7 @@
 - Claude Code `model` 字段兼容 string/object 两种形式
 - 优先从 Claude Code statusLine stdin 读取 `rate_limits`
 - 修复 context window 解析，避免新终端/新会话复用旧 transcript token 数据
+- workspace 和 Git 段固定使用 `workspace.project_dir`，避免 Skill、子代理或 shell `cd` 覆盖项目名称
 - Git 状态命令使用 `--no-optional-locks`
 
 ## 安装
@@ -276,7 +277,8 @@ context_limit = 1000000
 Claude Code 会通过 stdin 把 statusLine 数据传给命令。`best-claude-hud` 会读取：
 
 - `model`
-- `workspace.current_dir`
+- `workspace.project_dir`，用于稳定表示 Claude Code 启动目录
+- `workspace.current_dir`，用于兼容未提供 `project_dir` 的旧版 Claude Code
 - `transcript_path`
 - `cost`
 - `output_style`
@@ -348,7 +350,7 @@ cargo build --release
 mkdir -p release-artifacts
 tar -C target/release -czf release-artifacts/best-claude-hud-darwin-arm64.tar.gz best-claude-hud
 node packaging/npm/scripts/build-packages.js \
-  --version 0.1.5 \
+  --version 0.1.6 \
   --release-dir release-artifacts \
   --output-dir npm-tarballs
 ```
@@ -363,14 +365,14 @@ node packaging/npm/scripts/build-packages.js \
 创建 GitHub Release：
 
 ```bash
-git tag v0.1.5
-git push origin v0.1.5
+git tag v0.1.6
+git push origin v0.1.6
 ```
 
 npm trusted publishing 配置完成后发布：
 
 ```bash
-gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.5
+gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.6
 ```
 
 ## 项目资源

@@ -173,7 +173,7 @@ impl GitSegment {
 
 impl Segment for GitSegment {
     fn collect(&self, input: &InputData) -> Option<SegmentData> {
-        let git_info = self.get_git_info(&input.workspace.current_dir)?;
+        let git_info = self.get_git_info(input.workspace.project_directory())?;
 
         let mut metadata = HashMap::new();
         metadata.insert("branch".to_string(), git_info.branch.clone());
@@ -214,5 +214,70 @@ impl Segment for GitSegment {
 
     fn id(&self) -> SegmentId {
         SegmentId::Git
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+    use std::fs;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    #[test]
+    fn git_info_uses_project_directory_instead_of_temporary_current_directory() {
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let root = std::env::temp_dir().join(format!("best-claude-hud-git-{nanos}"));
+        let project_dir = root.join("Kimi-Test");
+        let skill_dir = root.join("skills");
+        fs::create_dir_all(&project_dir).unwrap();
+        fs::create_dir_all(&skill_dir).unwrap();
+
+        let init = Command::new("git")
+            .args(["init", "-b", "main"])
+            .current_dir(&project_dir)
+            .output()
+            .expect("git should be available for tests");
+        assert!(init.status.success());
+
+        let project_input: InputData = serde_json::from_value(json!({
+            "model": "test-model",
+            "workspace": {
+                "current_dir": project_dir,
+                "project_dir": project_dir
+            },
+            "transcript_path": "/tmp/missing.jsonl"
+        }))
+        .unwrap();
+        let skill_input: InputData = serde_json::from_value(json!({
+            "model": "test-model",
+            "workspace": {
+                "current_dir": skill_dir,
+                "project_dir": project_dir
+            },
+            "transcript_path": "/tmp/missing.jsonl"
+        }))
+        .unwrap();
+
+        let segment = GitSegment::new();
+        let project_data = segment.collect(&project_input);
+        let skill_data = segment.collect(&skill_input);
+        let _ = fs::remove_dir_all(root);
+
+        assert_eq!(
+            project_data
+                .expect("project Git information should exist")
+                .primary,
+            "main"
+        );
+        assert_eq!(
+            skill_data
+                .expect("temporary cwd should still use project Git information")
+                .primary,
+            "main"
+        );
     }
 }
