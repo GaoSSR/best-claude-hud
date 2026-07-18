@@ -183,6 +183,8 @@ jobs:
             - Compact Claude Code statusline focused on model, workspace, Git state, and context usage.
             - Workspace and Git status remain anchored to the Claude Code launch directory when skills, subagents, or shell commands change the temporary working directory.
             - Context window parsing avoids reusing stale token data from older terminal sessions.
+            - Interrupted Claude Code responses no longer reset context usage to zero.
+            - Official Claude Code `context_window` data is preferred before transcript fallback.
             - Claude Code `model` input supports both string and object forms.
             - `rate_limits` are read from Claude Code statusLine stdin before API fallback.
             - Project license is Apache-2.0 with upstream attribution preserved in `NOTICE`.

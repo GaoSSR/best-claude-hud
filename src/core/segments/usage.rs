@@ -368,6 +368,7 @@ mod tests {
                     resets_at: None,
                 }),
             }),
+            context_window: None,
         };
 
         let segment = UsageSegment::new().collect(&input).unwrap();

@@ -32,7 +32,7 @@ The default statusline focuses on:
 - Claude model display
 - Claude Code launch directory, stable across temporary working-directory changes
 - Git branch, clean/dirty/conflict state, and ahead/behind counts
-- context window token usage from the active Claude Code transcript
+- context window usage from Claude Code's official statusLine data, with active-transcript fallback
 - optional usage/rate-limit, cost, session, and output style segments
 
 ## Why This Fork Exists
@@ -46,6 +46,7 @@ Accepted in the initial rebuild:
 - Claude Code `model` input compatible with both string and object forms
 - `rate_limits` parsed directly from Claude Code statusLine stdin before falling back to API polling
 - context-window parsing fixed so a new terminal/session does not reuse stale token data from an older transcript
+- interrupted responses no longer reset context usage to zero while waiting for the next API response
 - workspace and Git segments anchored to `workspace.project_dir` so skills, subagents, and shell `cd` operations do not replace the project name
 - `git --no-optional-locks` used for statusline Git commands
 
@@ -280,11 +281,12 @@ Claude Code sends statusLine data to the command through stdin. `best-claude-hud
 - `workspace.project_dir` for the stable Claude Code launch directory
 - `workspace.current_dir` as a fallback for older Claude Code versions
 - `transcript_path`
+- `context_window`
 - `cost`
 - `output_style`
 - `rate_limits`
 
-For context window usage, the HUD reads only the active transcript file. If a new terminal/session has no transcript yet, it shows `0% · 0 tokens` instead of scanning older project history. This fixes the stale-token behavior where a new terminal inherited context usage from a previous Claude Code session.
+For context window usage, the HUD prefers Claude Code's official `context_window` fields. The active transcript is used only as a compatibility fallback when those fields are absent, null, or temporarily zero. All-zero usage placeholders written after an interrupted response are ignored, so pressing `Esc` does not erase the last valid context reading. A genuinely new session with no usage still shows `0% · 0 tokens` and never scans older project history.
 
 ## Git Status Indicators
 
@@ -350,7 +352,7 @@ cargo build --release
 mkdir -p release-artifacts
 tar -C target/release -czf release-artifacts/best-claude-hud-darwin-arm64.tar.gz best-claude-hud
 node packaging/npm/scripts/build-packages.js \
-  --version 0.1.6 \
+  --version 0.1.7 \
   --release-dir release-artifacts \
   --output-dir npm-tarballs
 ```
@@ -365,14 +367,14 @@ Release is split into two workflows:
 Create a GitHub Release:
 
 ```bash
-git tag v0.1.6
-git push origin v0.1.6
+git tag v0.1.7
+git push origin v0.1.7
 ```
 
 Publish to npm after npm trusted publishing is configured:
 
 ```bash
-gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.6
+gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.7
 ```
 
 ## Project Resources

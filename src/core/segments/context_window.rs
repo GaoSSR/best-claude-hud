@@ -22,13 +22,37 @@ impl ContextWindowSegment {
 
 impl Segment for ContextWindowSegment {
     fn collect(&self, input: &InputData) -> Option<SegmentData> {
-        // Dynamically determine context limit based on current model ID
-        let context_limit = Self::get_context_limit_for_model(&input.model.id);
+        let model_context_limit = Self::get_context_limit_for_model(&input.model.id) as u64;
+        let official_tokens = input
+            .context_window
+            .as_ref()
+            .and_then(|context| context.total_input_tokens)
+            .filter(|tokens| *tokens > 0);
+        let official_percentage = input
+            .context_window
+            .as_ref()
+            .and_then(|context| context.used_percentage)
+            .filter(|percentage| percentage.is_finite() && *percentage > 0.0);
+        let transcript_tokens = if official_tokens.is_none() {
+            parse_transcript_usage(&input.transcript_path).map(u64::from)
+        } else {
+            None
+        };
 
-        let context_used_token_opt = parse_transcript_usage(&input.transcript_path);
-
-        let context_used_token = context_used_token_opt.unwrap_or(0);
-        let context_used_rate = (context_used_token as f64 / context_limit as f64) * 100.0;
+        let context_used_token = official_tokens.or(transcript_tokens).unwrap_or(0);
+        let context_limit = input
+            .context_window
+            .as_ref()
+            .and_then(|context| context.context_window_size)
+            .filter(|limit| *limit > 0)
+            .unwrap_or(model_context_limit);
+        let context_used_rate = official_percentage.unwrap_or_else(|| {
+            if context_used_token == 0 || context_limit == 0 {
+                0.0
+            } else {
+                (context_used_token as f64 / context_limit as f64) * 100.0
+            }
+        });
         let percentage_display = if context_used_rate.fract() == 0.0 {
             format!("{:.0}%", context_used_rate)
         } else {
@@ -41,6 +65,17 @@ impl Segment for ContextWindowSegment {
         metadata.insert("percentage".to_string(), context_used_rate.to_string());
         metadata.insert("limit".to_string(), context_limit.to_string());
         metadata.insert("model".to_string(), input.model.id.clone());
+        metadata.insert(
+            "source".to_string(),
+            if official_tokens.is_some() || official_percentage.is_some() {
+                "statusline_context_window"
+            } else if transcript_tokens.is_some() {
+                "transcript"
+            } else {
+                "empty"
+            }
+            .to_string(),
+        );
 
         Some(SegmentData {
             primary: format!("{} · {} tokens", percentage_display, tokens_display),
@@ -187,17 +222,22 @@ fn extract_usage(message: &Message, require_complete: bool) -> Option<u32> {
         return None;
     }
 
-    message
+    let tokens = message
         .usage
         .clone()
-        .map(|usage| usage.normalize().display_tokens())
+        .map(|usage| usage.normalize().display_tokens())?;
+
+    // Claude Code writes a completed-looking, all-zero usage placeholder when
+    // the user interrupts a response. Ignore it so the previous valid context
+    // snapshot remains visible until another API response arrives.
+    (tokens > 0).then_some(tokens)
 }
 
-fn format_tokens(tokens: u32) -> String {
+fn format_tokens(tokens: u64) -> String {
     if tokens >= 1000 {
         let k_value = tokens as f64 / 1000.0;
         if k_value.fract() == 0.0 {
-            format!("{}k", k_value as u32)
+            format!("{}k", k_value as u64)
         } else {
             format!("{:.1}k", k_value)
         }
@@ -234,6 +274,101 @@ mod tests {
         std::fs::remove_file(path).unwrap();
 
         assert_eq!(usage, Some(2500));
+    }
+
+    #[test]
+    fn transcript_parser_ignores_zero_usage_from_interrupted_response() {
+        let path = write_temp_transcript(
+            r#"{"type":"assistant","message":{"usage":{"input_tokens":2566,"cache_read_input_tokens":275456,"output_tokens":557},"stop_reason":"tool_use"}}
+{"type":"assistant","message":{"usage":{"input_tokens":0,"output_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0},"stop_reason":"stop_sequence"}}
+{"type":"user","message":{"content":[{"type":"text","text":"[Request interrupted by user]"}]}}
+"#,
+        );
+
+        let usage = try_parse_transcript_file(&path);
+        std::fs::remove_file(path).unwrap();
+
+        assert_eq!(usage, Some(278_579));
+    }
+
+    #[test]
+    fn context_segment_prefers_official_statusline_data() {
+        let path = write_temp_transcript(
+            r#"{"type":"assistant","message":{"usage":{"input_tokens":99999},"stop_reason":"end_turn"}}"#,
+        );
+        let input: InputData = serde_json::from_value(serde_json::json!({
+            "model": { "id": "kimi-k2.7-code", "display_name": "Kimi K2.7" },
+            "workspace": { "current_dir": "/tmp/project" },
+            "transcript_path": path,
+            "context_window": {
+                "total_input_tokens": 24000,
+                "context_window_size": 262144,
+                "used_percentage": 9.2
+            }
+        }))
+        .unwrap();
+
+        let data = ContextWindowSegment::new().collect(&input).unwrap();
+        std::fs::remove_file(&input.transcript_path).unwrap();
+
+        assert_eq!(data.primary, "9.2% · 24k tokens");
+        assert_eq!(
+            data.metadata.get("source").map(String::as_str),
+            Some("statusline_context_window")
+        );
+    }
+
+    #[test]
+    fn zero_statusline_snapshot_falls_back_to_pre_interrupt_usage() {
+        let path = write_temp_transcript(
+            r#"{"type":"assistant","message":{"usage":{"input_tokens":2566,"cache_read_input_tokens":275456,"output_tokens":557},"stop_reason":"tool_use"}}
+{"type":"assistant","message":{"usage":{"input_tokens":0,"output_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0},"stop_reason":"stop_sequence"}}
+"#,
+        );
+        let input: InputData = serde_json::from_value(serde_json::json!({
+            "model": { "id": "k3[1m]", "display_name": "K3" },
+            "workspace": { "current_dir": "/tmp/project" },
+            "transcript_path": path,
+            "context_window": {
+                "total_input_tokens": 0,
+                "context_window_size": 1000000,
+                "used_percentage": 0
+            }
+        }))
+        .unwrap();
+
+        let data = ContextWindowSegment::new().collect(&input).unwrap();
+        std::fs::remove_file(&input.transcript_path).unwrap();
+
+        assert_eq!(data.primary, "27.9% · 278.6k tokens");
+        assert_eq!(
+            data.metadata.get("source").map(String::as_str),
+            Some("transcript")
+        );
+    }
+
+    #[test]
+    fn empty_new_session_still_displays_zero_usage() {
+        let missing = std::env::temp_dir().join("best-claude-hud-empty-session.jsonl");
+        let input: InputData = serde_json::from_value(serde_json::json!({
+            "model": { "id": "k3[1m]", "display_name": "K3" },
+            "workspace": { "current_dir": "/tmp/project" },
+            "transcript_path": missing,
+            "context_window": {
+                "total_input_tokens": 0,
+                "context_window_size": 1000000,
+                "used_percentage": 0
+            }
+        }))
+        .unwrap();
+
+        let data = ContextWindowSegment::new().collect(&input).unwrap();
+
+        assert_eq!(data.primary, "0% · 0 tokens");
+        assert_eq!(
+            data.metadata.get("source").map(String::as_str),
+            Some("empty")
+        );
     }
 
     #[test]

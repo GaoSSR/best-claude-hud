@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.7 - 2026-07-18
+
+- Prefer Claude Code's official `context_window` statusLine data for context
+  usage and window size.
+- Preserve the last valid context usage when an interrupted response writes an
+  all-zero usage placeholder to the active transcript.
+- Keep transcript parsing as a compatibility fallback when official context
+  data is absent, null, or temporarily zero.
+
 ## 0.1.6 - 2026-07-18
 
 - Add Nix flake packaging and development shell support.

@@ -174,6 +174,16 @@ pub struct RateLimits {
     pub seven_day: Option<RateLimitWindow>,
 }
 
+#[derive(Debug, Clone, Deserialize, Default)]
+pub struct ContextWindow {
+    #[serde(default)]
+    pub total_input_tokens: Option<u64>,
+    #[serde(default)]
+    pub context_window_size: Option<u64>,
+    #[serde(default)]
+    pub used_percentage: Option<f64>,
+}
+
 #[derive(Deserialize)]
 pub struct InputData {
     pub model: Model,
@@ -182,6 +192,7 @@ pub struct InputData {
     pub cost: Option<Cost>,
     pub output_style: Option<OutputStyle>,
     pub rate_limits: Option<RateLimits>,
+    pub context_window: Option<ContextWindow>,
 }
 
 // OpenAI-style nested token details
@@ -518,6 +529,11 @@ mod tests {
                 "seven_day": {
                     "used_percentage": 61.0
                 }
+            },
+            "context_window": {
+                "total_input_tokens": 24000,
+                "context_window_size": 262144,
+                "used_percentage": 9.2
             }
         }))
         .unwrap();
@@ -527,5 +543,9 @@ mod tests {
         let rate_limits = input.rate_limits.unwrap();
         assert_eq!(rate_limits.five_hour.unwrap().used_percentage, Some(42.4));
         assert_eq!(rate_limits.seven_day.unwrap().used_percentage, Some(61.0));
+        let context_window = input.context_window.unwrap();
+        assert_eq!(context_window.total_input_tokens, Some(24_000));
+        assert_eq!(context_window.context_window_size, Some(262_144));
+        assert_eq!(context_window.used_percentage, Some(9.2));
     }
 }
