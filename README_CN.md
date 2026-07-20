@@ -21,8 +21,6 @@
 
 `best-claude-hud` 是一个用 Rust 写的高性能 Claude Code 状态栏工具。它在终端中展示真正有用的 Claude Code 工作状态：当前模型、工作目录、Git 分支/状态、上下文窗口占用，以及可选的 usage/rate limit 信息。
 
-本项目基于 [`Haleclipse/CCometixLine`](https://github.com/Haleclipse/CCometixLine) 的源代码重建，但使用新的仓库、包名、发布流程和维护策略。默认目标是紧凑的单行 HUD，而不是高密度、多行、污染屏幕的信息面板。
-
 <p align="center">
   <img src="assets/best-claude-hud-preview.png" alt="best-claude-hud statusline preview" width="1200">
 </p>
@@ -34,20 +32,6 @@
 - Git 分支、clean/dirty/conflict 状态和 ahead/behind 计数
 - 当前 Claude Code transcript 的 context window token 占用
 - 可选的 usage/rate-limit、cost、session、output style 段落
-
-## 为什么要做这个 Fork
-
-原项目 `CCometixLine` 很有价值，但积累了一些兼容性 PR/Issue，也缺少明确的默认输出策略。`best-claude-hud` 保留它有用的 Rust/TUI 基础，同时把项目整理成更适合维护和发布的公共开源项目。
-
-初始重建已接收：
-
-- npm-first 安装与多平台 optional dependencies
-- npm 安装不再复制/硬链接二进制到 `~/.claude`
-- Claude Code `model` 字段兼容 string/object 两种形式
-- 优先从 Claude Code statusLine stdin 读取 `rate_limits`
-- 修复 context window 解析，避免新终端/新会话复用旧 transcript token 数据
-- workspace 和 Git 段固定使用 `workspace.project_dir`，避免 Skill、子代理或 shell `cd` 覆盖项目名称
-- Git 状态命令使用 `--no-optional-locks`
 
 ## 安装
 
@@ -384,7 +368,7 @@ gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.6
 
 ## 致谢
 
-`best-claude-hud` 基于 [`Haleclipse/CCometixLine`](https://github.com/Haleclipse/CCometixLine) 的源代码。上游项目在 Cargo metadata 中声明为 MIT，相关版权归属保留在 [NOTICE](./NOTICE)。
+第三方版权归属保留在 [NOTICE](./NOTICE)。
 
 ## License
 

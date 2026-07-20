@@ -21,8 +21,6 @@
 
 `best-claude-hud` is a high-performance Claude Code statusline tool written in Rust. It shows the status information you actually need while using Claude Code in a terminal: model, workspace, Git branch/status, context window usage, and optional usage/rate-limit metadata.
 
-This project starts from the source code of [`Haleclipse/CCometixLine`](https://github.com/Haleclipse/CCometixLine), then rebuilds the project under a new repository, package name, release workflow, and maintenance direction. The default goal is a compact single-line HUD, not a noisy multi-line dashboard.
-
 <p align="center">
   <img src="assets/best-claude-hud-preview.png" alt="best-claude-hud statusline preview" width="1200">
 </p>
@@ -34,21 +32,6 @@ The default statusline focuses on:
 - Git branch, clean/dirty/conflict state, and ahead/behind counts
 - context window usage from Claude Code's official statusLine data, with active-transcript fallback
 - optional usage/rate-limit, cost, session, and output style segments
-
-## Why This Fork Exists
-
-The original `CCometixLine` is useful and feature-rich, but the maintenance queue has open PRs/issues that need review, compatibility fixes, and a clear default-output policy. `best-claude-hud` keeps the useful Rust/TUI foundation and makes the project easier to maintain as a public package.
-
-Accepted in the initial rebuild:
-
-- npm-first installation and platform optional dependencies
-- no binary copy/link into `~/.claude`
-- Claude Code `model` input compatible with both string and object forms
-- `rate_limits` parsed directly from Claude Code statusLine stdin before falling back to API polling
-- context-window parsing fixed so a new terminal/session does not reuse stale token data from an older transcript
-- interrupted responses no longer reset context usage to zero while waiting for the next API response
-- workspace and Git segments anchored to `workspace.project_dir` so skills, subagents, and shell `cd` operations do not replace the project name
-- `git --no-optional-locks` used for statusline Git commands
 
 ## Install
 
@@ -386,7 +369,7 @@ gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.7
 
 ## Acknowledgements
 
-`best-claude-hud` is based on source code from [`Haleclipse/CCometixLine`](https://github.com/Haleclipse/CCometixLine). The upstream project is declared MIT in its Cargo metadata, and upstream attribution is preserved in [NOTICE](./NOTICE).
+Third-party attribution is preserved in [NOTICE](./NOTICE).
 
 ## License
 
