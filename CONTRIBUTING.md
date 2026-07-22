@@ -24,12 +24,16 @@ cargo run -- --help
 For npm packaging checks:
 
 ```bash
-node npm/scripts/prepare-packages.js 0.1.0
-cp target/release/best-claude-hud npm-publish/darwin-arm64/best-claude-hud
-chmod +x npm-publish/darwin-arm64/best-claude-hud
-(cd npm-publish/darwin-arm64 && npm pack --dry-run)
-(cd npm-publish/main && npm pack --dry-run)
+npm --prefix packaging/npm run check
+npm --prefix packaging/npm run test
+npm --prefix packaging/npm run pack:dry-run
 ```
+
+## Releases
+
+Follow the complete, approval-gated checklist in [RELEASING.md](RELEASING.md).
+Do not create a tag until the Cargo and npm manifests declare the intended
+version and the release-preparation commit has passed CI.
 
 ## Pull Requests
 

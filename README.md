@@ -343,42 +343,18 @@ npm --prefix packaging/npm run check
 npm --prefix packaging/npm run test
 ```
 
-Useful release checks:
-
-```bash
-cargo build --release
-mkdir -p release-artifacts
-tar -C target/release -czf release-artifacts/best-claude-hud-darwin-arm64.tar.gz best-claude-hud
-node packaging/npm/scripts/build-packages.js \
-  --version 0.1.8 \
-  --release-dir release-artifacts \
-  --output-dir npm-tarballs
-```
-
 ## Release
 
-Release is split into two workflows:
-
-- `Release`: builds GitHub release artifacts and npm tarballs
-- `npm publish`: manually publishes npm packages after release artifacts exist
-
-Create a GitHub Release:
-
-```bash
-git tag v0.1.8
-git push origin v0.1.8
-```
-
-Publish to npm after npm trusted publishing is configured:
-
-```bash
-gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.8
-```
+Maintainers must follow the complete, approval-gated checklist in
+[RELEASING.md](./RELEASING.md). It is the source of truth for version updates,
+local verification, Git tags, GitHub Releases, npm publishing, and local
+installation upgrades.
 
 ## Project Resources
 
 - [Changelog](./CHANGELOG.md)
 - [Contributing guide](./CONTRIBUTING.md)
+- [Release process](./RELEASING.md)
 - [Security policy](./SECURITY.md)
 - [Upstream triage](./docs/triage.md)
 

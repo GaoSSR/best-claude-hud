@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.9 - 2026-07-23
+
+- Clear stale Ultracode state as soon as a new `/effort` command appears, so
+  cancelled, overridden, or unrecognized command output cannot replace the
+  effective statusLine effort and ordinary `xhigh` remains distinct.
+- Version effort caches and rebuild incompatible cache data from the active
+  process transcript, preventing state written by older HUD versions from
+  leaking into the upgraded session.
+- Render the model name and reasoning effort through one shared path with
+  exactly one ASCII space in both background and non-background themes.
+
 ## 0.1.8 - 2026-07-22
 
 - Display Claude Code's live reasoning mode next to the model name in a

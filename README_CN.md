@@ -346,42 +346,17 @@ npm --prefix packaging/npm run check
 npm --prefix packaging/npm run test
 ```
 
-发布前可做 npm dry-run：
-
-```bash
-cargo build --release
-mkdir -p release-artifacts
-tar -C target/release -czf release-artifacts/best-claude-hud-darwin-arm64.tar.gz best-claude-hud
-node packaging/npm/scripts/build-packages.js \
-  --version 0.1.8 \
-  --release-dir release-artifacts \
-  --output-dir npm-tarballs
-```
-
 ## 发布
 
-发布拆成两个 workflow：
-
-- `Release`：构建 GitHub Release artifacts 和 npm tarballs
-- `npm publish`：在 release artifacts 存在后手动发布 npm 包
-
-创建 GitHub Release：
-
-```bash
-git tag v0.1.8
-git push origin v0.1.8
-```
-
-npm trusted publishing 配置完成后发布：
-
-```bash
-gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.8
-```
+维护者必须遵循 [RELEASING.md](./RELEASING.md) 中完整、带审批门禁的检查清单。
+该文档是版本更新、本地验证、Git tag、GitHub Release、npm 发布和本机安装升级的
+唯一流程来源。
 
 ## 项目资源
 
 - [Changelog](./CHANGELOG.md)
 - [贡献指南](./CONTRIBUTING.md)
+- [发版流程](./RELEASING.md)
 - [安全策略](./SECURITY.md)
 - [上游 PR/Issue 接收策略](./docs/triage.md)
 

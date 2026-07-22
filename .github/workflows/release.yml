@@ -17,9 +17,53 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  validate-version:
+    name: Validate release version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.release-version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Match tag, Cargo, lockfile, and npm versions
+        id: release-version
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -n "${{ inputs.version }}" ]; then
+            VERSION="${{ inputs.version }}"
+          elif [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+          else
+            echo "A version input is required outside a v* tag build." >&2
+            exit 1
+          fi
+          VERSION="${VERSION#v}"
+
+          CARGO_VERSION="$(
+            cargo metadata --locked --no-deps --format-version 1 \
+              | jq -r '.packages[] | select(.name == "best-claude-hud") | .version'
+          )"
+          NPM_VERSION="$(node -p "require('./packaging/npm/package.json').version")"
+
+          if [ "$VERSION" != "$CARGO_VERSION" ] || [ "$VERSION" != "$NPM_VERSION" ]; then
+            echo "Release version mismatch:" >&2
+            echo "  requested: $VERSION" >&2
+            echo "  Cargo/Cargo.lock: $CARGO_VERSION" >&2
+            echo "  npm: $NPM_VERSION" >&2
+            exit 1
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
   build:
     name: Build ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
+    needs: validate-version
     strategy:
       fail-fast: false
       matrix:
@@ -108,7 +152,7 @@ jobs:
   npm-packages:
     name: Build npm tarballs
     runs-on: ubuntu-latest
-    needs: build
+    needs: [validate-version, build]
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -134,12 +178,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ -n "${{ inputs.version }}" ]; then
-            VERSION="${{ inputs.version }}"
-          else
-            VERSION="${GITHUB_REF_NAME#v}"
-          fi
-          VERSION="${VERSION#v}"
+          VERSION="${{ needs.validate-version.outputs.version }}"
 
           mkdir -p npm-tarballs
           node packaging/npm/scripts/build-packages.js \
@@ -182,6 +221,8 @@ jobs:
             - npm-first installation with platform-specific native binaries.
             - Compact Claude Code statusline focused on model, workspace, Git state, and context usage.
             - Live reasoning mode is appended to the model name in bright purple, including distinct `xhigh`, `max`, and `ultracode` labels.
+            - Reasoning-mode cache upgrades fail closed so cancelled, overridden, or unknown `/effort` output cannot preserve stale Ultracode state.
+            - Model and reasoning mode use one explicit ASCII space across background and non-background themes.
             - Workspace and Git status remain anchored to the Claude Code launch directory when skills, subagents, or shell commands change the temporary working directory.
             - Context window parsing avoids reusing stale token data from older terminal sessions.
             - Interrupted Claude Code responses no longer reset context usage to zero.
