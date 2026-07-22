@@ -139,7 +139,13 @@ jobs:
           Copy-Item "target/${{ matrix.target }}/release/best-claude-hud.exe" "dist/best-claude-hud.exe"
           Compress-Archive -Path "dist/best-claude-hud.exe" -DestinationPath "${{ matrix.archive }}" -Force
           $hash = Get-FileHash -Algorithm SHA256 "${{ matrix.archive }}"
-          "$($hash.Hash.ToLower())  ${{ matrix.archive }}" | Out-File "${{ matrix.archive }}.sha256" -Encoding ascii
+          $checksumPath = "${{ matrix.archive }}.sha256"
+          $checksum = "$($hash.Hash.ToLower())  ${{ matrix.archive }}`n"
+          $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+          [System.IO.File]::WriteAllText($checksumPath, $checksum, $utf8NoBom)
+          if ([System.IO.File]::ReadAllBytes($checksumPath) -contains 13) {
+            throw "Checksum file contains a carriage return."
+          }
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v6

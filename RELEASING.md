@@ -76,7 +76,9 @@ The tag push triggers `.github/workflows/release.yml`. Wait for it to build all
 supported native archives, create npm tarballs and checksums, and publish the
 GitHub Release. Its first job rejects any mismatch between the tag, Cargo
 metadata and lockfile, and the npm manifest. Verify the workflow conclusion and
-every expected release asset.
+every expected release asset. Download the published assets into a temporary
+directory and validate every `.sha256` file against its archive; an asset list
+alone is not verification. Remove the temporary directory afterward.
 
 Do not delete or move the tag if the workflow fails. Report the exact failure
 and request approval for the recovery action.
