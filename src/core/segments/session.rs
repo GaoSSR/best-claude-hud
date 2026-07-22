@@ -75,6 +75,7 @@ impl Segment for SessionSegment {
         Some(SegmentData {
             primary,
             secondary,
+            secondary_color: None,
             metadata,
         })
     }

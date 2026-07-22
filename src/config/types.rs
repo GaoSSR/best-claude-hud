@@ -184,15 +184,24 @@ pub struct ContextWindow {
     pub used_percentage: Option<f64>,
 }
 
+#[derive(Debug, Clone, Deserialize, Default)]
+pub struct Effort {
+    #[serde(default)]
+    pub level: Option<String>,
+}
+
 #[derive(Deserialize)]
 pub struct InputData {
     pub model: Model,
     pub workspace: Workspace,
     pub transcript_path: String,
+    #[serde(default)]
+    pub session_id: Option<String>,
     pub cost: Option<Cost>,
     pub output_style: Option<OutputStyle>,
     pub rate_limits: Option<RateLimits>,
     pub context_window: Option<ContextWindow>,
+    pub effort: Option<Effort>,
 }
 
 // OpenAI-style nested token details

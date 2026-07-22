@@ -245,6 +245,7 @@ impl Segment for UsageSegment {
             return Some(SegmentData {
                 primary,
                 secondary,
+                secondary_color: None,
                 metadata,
             });
         }
@@ -329,6 +330,7 @@ impl Segment for UsageSegment {
         Some(SegmentData {
             primary,
             secondary,
+            secondary_color: None,
             metadata,
         })
     }
@@ -356,6 +358,7 @@ mod tests {
                 project_dir: None,
             },
             transcript_path: "/tmp/missing.jsonl".to_string(),
+            session_id: None,
             cost: None,
             output_style: None,
             rate_limits: Some(RateLimits {
@@ -369,6 +372,7 @@ mod tests {
                 }),
             }),
             context_window: None,
+            effort: None,
         };
 
         let segment = UsageSegment::new().collect(&input).unwrap();

@@ -34,6 +34,7 @@ impl Segment for CostSegment {
         Some(SegmentData {
             primary,
             secondary,
+            secondary_color: None,
             metadata,
         })
     }

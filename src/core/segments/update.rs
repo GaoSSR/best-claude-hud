@@ -19,6 +19,7 @@ impl Segment for UpdateSegment {
         update_state.status_text().map(|status_text| SegmentData {
             primary: status_text,
             secondary: String::new(),
+            secondary_color: None,
             metadata: std::collections::HashMap::new(),
         })
     }

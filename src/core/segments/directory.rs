@@ -39,6 +39,7 @@ impl Segment for DirectorySegment {
         Some(SegmentData {
             primary: dir_name,
             secondary: String::new(),
+            secondary_color: None,
             metadata,
         })
     }

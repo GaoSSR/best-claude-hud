@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.8 - 2026-07-22
+
+- Display Claude Code's live reasoning mode next to the model name in a
+  dedicated bright purple color.
+- Distinguish `low`, `medium`, `high`, `xhigh`, `max`, and `ultracode` without
+  adding another statusline segment, icon, or separator.
+- Recognize Ultracode from successful `/effort` events in the active Claude
+  Code process because the official statusline payload reports it as `xhigh`.
+- Ignore Ultracode events from an earlier process when a conversation is
+  resumed, while treating `CLAUDE_CODE_EFFORT_LEVEL=xhigh` as compatible and
+  preventing incompatible environment overrides from being misreported.
+- Keep the model-only display for models and Claude Code versions that do not
+  provide reasoning effort.
+
 ## 0.1.7 - 2026-07-18
 
 - Prefer Claude Code's official `context_window` statusLine data for context

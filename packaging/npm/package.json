@@ -1,6 +1,6 @@
 {
   "name": "best-claude-hud",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Minimal Claude Code statusline HUD powered by Rust",
   "license": "Apache-2.0",
   "private": true,

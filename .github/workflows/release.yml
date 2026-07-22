@@ -181,6 +181,7 @@ jobs:
 
             - npm-first installation with platform-specific native binaries.
             - Compact Claude Code statusline focused on model, workspace, Git state, and context usage.
+            - Live reasoning mode is appended to the model name in bright purple, including distinct `xhigh`, `max`, and `ultracode` labels.
             - Workspace and Git status remain anchored to the Claude Code launch directory when skills, subagents, or shell commands change the temporary working directory.
             - Context window parsing avoids reusing stale token data from older terminal sessions.
             - Interrupted Claude Code responses no longer reset context usage to zero.

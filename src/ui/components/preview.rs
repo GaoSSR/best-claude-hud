@@ -97,7 +97,12 @@ impl PreviewComponent {
             let mock_data = match segment_config.id {
                 SegmentId::Model => SegmentData {
                     primary: "Sonnet 4".to_string(),
-                    secondary: "".to_string(),
+                    secondary: "ultracode".to_string(),
+                    secondary_color: Some(crate::config::AnsiColor::Rgb {
+                        r: 180,
+                        g: 92,
+                        b: 255,
+                    }),
                     metadata: {
                         let mut map = HashMap::new();
                         map.insert("model".to_string(), "claude-4-sonnet-20250512".to_string());
@@ -107,6 +112,7 @@ impl PreviewComponent {
                 SegmentId::Directory => SegmentData {
                     primary: "Best Claude HUD".to_string(),
                     secondary: "".to_string(),
+                    secondary_color: None,
                     metadata: {
                         let mut map = HashMap::new();
                         map.insert("current_dir".to_string(), "~/Best Claude HUD".to_string());
@@ -116,6 +122,7 @@ impl PreviewComponent {
                 SegmentId::Git => SegmentData {
                     primary: "master".to_string(),
                     secondary: "✓".to_string(),
+                    secondary_color: None,
                     metadata: {
                         let mut map = HashMap::new();
                         map.insert("branch".to_string(), "master".to_string());
@@ -128,6 +135,7 @@ impl PreviewComponent {
                 SegmentId::ContextWindow => SegmentData {
                     primary: "78.2%".to_string(),
                     secondary: "· 156.4k".to_string(),
+                    secondary_color: None,
                     metadata: {
                         let mut map = HashMap::new();
                         map.insert("total_tokens".to_string(), "156400".to_string());
@@ -139,11 +147,13 @@ impl PreviewComponent {
                 SegmentId::Usage => SegmentData {
                     primary: "24%".to_string(),
                     secondary: "· 10-7-2".to_string(),
+                    secondary_color: None,
                     metadata: HashMap::new(),
                 },
                 SegmentId::Cost => SegmentData {
                     primary: "$0.02".to_string(),
                     secondary: "".to_string(),
+                    secondary_color: None,
                     metadata: {
                         let mut map = HashMap::new();
                         map.insert("cost".to_string(), "0.01234".to_string());
@@ -153,6 +163,7 @@ impl PreviewComponent {
                 SegmentId::Session => SegmentData {
                     primary: "3m45s".to_string(),
                     secondary: "\x1b[32m+156\x1b[0m \x1b[31m-23\x1b[0m".to_string(),
+                    secondary_color: None,
                     metadata: {
                         let mut map = HashMap::new();
                         map.insert("duration_ms".to_string(), "225000".to_string());
@@ -164,6 +175,7 @@ impl PreviewComponent {
                 SegmentId::OutputStyle => SegmentData {
                     primary: "default".to_string(),
                     secondary: "".to_string(),
+                    secondary_color: None,
                     metadata: {
                         let mut map = HashMap::new();
                         map.insert("style_name".to_string(), "default".to_string());
@@ -173,6 +185,7 @@ impl PreviewComponent {
                 SegmentId::Update => SegmentData {
                     primary: format!("v{}", env!("CARGO_PKG_VERSION")),
                     secondary: "".to_string(),
+                    secondary_color: None,
                     metadata: {
                         let mut map = HashMap::new();
                         map.insert(
@@ -189,5 +202,24 @@ impl PreviewComponent {
         }
 
         segments_data
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::ui::themes::ThemePresets;
+
+    #[test]
+    fn all_builtin_theme_previews_render_reasoning_effort() {
+        for (theme_name, _) in ThemePresets::get_available_themes() {
+            let mut preview = PreviewComponent::new();
+            preview.update_preview(&ThemePresets::get_theme(theme_name));
+
+            assert!(
+                preview.get_preview_cache().contains("ultracode"),
+                "theme {theme_name} should render the model effort"
+            );
+        }
     }
 }

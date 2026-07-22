@@ -243,12 +243,12 @@ impl StatusLineGenerator {
             let mut segment_content = format!(" {} {} ", icon_colored, text_styled);
 
             if !data.secondary.is_empty() {
+                let secondary_color = data
+                    .secondary_color
+                    .as_ref()
+                    .or(config.colors.text.as_ref());
                 let secondary_styled = self
-                    .apply_style(
-                        &data.secondary,
-                        config.colors.text.as_ref(),
-                        config.styles.text_bold,
-                    )
+                    .apply_style(&data.secondary, secondary_color, config.styles.text_bold)
                     .replace("\x1b[0m", "");
                 segment_content.push_str(&format!("{} ", secondary_styled));
             }
@@ -267,13 +267,13 @@ impl StatusLineGenerator {
             let mut segment = format!("{} {}", icon_colored, text_styled);
 
             if !data.secondary.is_empty() {
+                let secondary_color = data
+                    .secondary_color
+                    .as_ref()
+                    .or(config.colors.text.as_ref());
                 segment.push_str(&format!(
                     " {}",
-                    self.apply_style(
-                        &data.secondary,
-                        config.colors.text.as_ref(),
-                        config.styles.text_bold
-                    )
+                    self.apply_style(&data.secondary, secondary_color, config.styles.text_bold)
                 ));
             }
 
@@ -517,4 +517,59 @@ pub fn collect_all_segments(
     }
 
     results
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::config::{
+        AnsiColor, ColorConfig, IconConfig, SegmentId, StyleConfig, TextStyleConfig,
+    };
+    use std::collections::HashMap;
+
+    #[test]
+    fn renders_model_effort_with_its_independent_bright_purple_color() {
+        let config = Config {
+            style: StyleConfig {
+                mode: StyleMode::Plain,
+                separator: " | ".to_string(),
+            },
+            segments: Vec::new(),
+            theme: "test".to_string(),
+        };
+        let segment_config = SegmentConfig {
+            id: SegmentId::Model,
+            enabled: true,
+            icon: IconConfig {
+                plain: "🤖".to_string(),
+                nerd_font: "M".to_string(),
+            },
+            colors: ColorConfig {
+                icon: Some(AnsiColor::Color16 { c16: 14 }),
+                text: Some(AnsiColor::Color16 { c16: 14 }),
+                background: None,
+            },
+            styles: TextStyleConfig::default(),
+            options: HashMap::new(),
+        };
+        let data = SegmentData {
+            primary: "k3[1m] 1M".to_string(),
+            secondary: "ultracode".to_string(),
+            secondary_color: Some(AnsiColor::Rgb {
+                r: 180,
+                g: 92,
+                b: 255,
+            }),
+            metadata: HashMap::new(),
+        };
+
+        let output = StatusLineGenerator::new(config).generate(vec![(segment_config, data)]);
+
+        assert!(output.contains("\x1b[96mk3[1m] 1M\x1b[0m"));
+        assert!(output.contains("\x1b[38;2;180;92;255multracode\x1b[0m"));
+        assert_eq!(
+            visible_width(&output),
+            "🤖 k3[1m] 1M ultracode".chars().count()
+        );
+    }
 }

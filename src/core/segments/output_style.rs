@@ -24,6 +24,7 @@ impl Segment for OutputStyleSegment {
         Some(SegmentData {
             primary,
             secondary: String::new(),
+            secondary_color: None,
             metadata,
         })
     }

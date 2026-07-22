@@ -80,6 +80,7 @@ impl Segment for ContextWindowSegment {
         Some(SegmentData {
             primary: format!("{} · {} tokens", percentage_display, tokens_display),
             secondary: String::new(),
+            secondary_color: None,
             metadata,
         })
     }
@@ -249,14 +250,21 @@ fn format_tokens(tokens: u64) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::atomic::{AtomicU64, Ordering};
     use std::time::{SystemTime, UNIX_EPOCH};
+
+    static TEMP_FILE_COUNTER: AtomicU64 = AtomicU64::new(0);
 
     fn write_temp_transcript(contents: &str) -> std::path::PathBuf {
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_nanos();
-        let path = std::env::temp_dir().join(format!("best-claude-hud-{nanos}.jsonl"));
+        let sequence = TEMP_FILE_COUNTER.fetch_add(1, Ordering::Relaxed);
+        let path = std::env::temp_dir().join(format!(
+            "best-claude-hud-{}-{nanos}-{sequence}.jsonl",
+            std::process::id()
+        ));
         std::fs::write(&path, contents).unwrap();
         path
     }

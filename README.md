@@ -27,7 +27,7 @@
 
 The default statusline focuses on:
 
-- Claude model display
+- Claude model display with live reasoning effort when available
 - Claude Code launch directory, stable across temporary working-directory changes
 - Git branch, clean/dirty/conflict state, and ahead/behind counts
 - context window usage from Claude Code's official statusLine data, with active-transcript fallback
@@ -261,13 +261,28 @@ context_limit = 1000000
 Claude Code sends statusLine data to the command through stdin. `best-claude-hud` reads:
 
 - `model`
+- `effort.level`, appended to the model name when the current model supports reasoning effort
 - `workspace.project_dir` for the stable Claude Code launch directory
 - `workspace.current_dir` as a fallback for older Claude Code versions
 - `transcript_path`
+- `session_id`, used to scope Ultracode detection to the current Claude Code process
 - `context_window`
 - `cost`
 - `output_style`
 - `rate_limits`
+
+The mode is appended directly after the model name with one space and rendered
+in bright purple (`#B45CFF`). The HUD displays `low`, `medium`, `high`, `xhigh`,
+`max`, or `ultracode`; no extra icon or separator is added.
+
+Claude Code's official statusline payload reports Ultracode as `xhigh`. To keep
+ordinary `xhigh` and Ultracode distinct, the HUD cross-checks successful
+`/effort` events from the current Claude Code process only. Events from an
+earlier process are ignored when a conversation is resumed. An `xhigh`
+`CLAUDE_CODE_EFFORT_LEVEL` override remains compatible with Ultracode, while
+other active overrides prevent it from being reported. If Claude Code does not
+provide effort data, unsupported and third-party models keep the existing
+model-only display. The Claude Code version field is intentionally not shown.
 
 For context window usage, the HUD prefers Claude Code's official `context_window` fields. The active transcript is used only as a compatibility fallback when those fields are absent, null, or temporarily zero. All-zero usage placeholders written after an interrupted response are ignored, so pressing `Esc` does not erase the last valid context reading. A genuinely new session with no usage still shows `0% · 0 tokens` and never scans older project history.
 
@@ -335,7 +350,7 @@ cargo build --release
 mkdir -p release-artifacts
 tar -C target/release -czf release-artifacts/best-claude-hud-darwin-arm64.tar.gz best-claude-hud
 node packaging/npm/scripts/build-packages.js \
-  --version 0.1.7 \
+  --version 0.1.8 \
   --release-dir release-artifacts \
   --output-dir npm-tarballs
 ```
@@ -350,14 +365,14 @@ Release is split into two workflows:
 Create a GitHub Release:
 
 ```bash
-git tag v0.1.7
-git push origin v0.1.7
+git tag v0.1.8
+git push origin v0.1.8
 ```
 
 Publish to npm after npm trusted publishing is configured:
 
 ```bash
-gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.7
+gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.8
 ```
 
 ## Project Resources

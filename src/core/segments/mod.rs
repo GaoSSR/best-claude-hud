@@ -8,7 +8,7 @@ pub mod session;
 pub mod update;
 pub mod usage;
 
-use crate::config::{InputData, SegmentId};
+use crate::config::{AnsiColor, InputData, SegmentId};
 use std::collections::HashMap;
 
 // New Segment trait for data collection only
@@ -21,6 +21,7 @@ pub trait Segment {
 pub struct SegmentData {
     pub primary: String,
     pub secondary: String,
+    pub secondary_color: Option<AnsiColor>,
     pub metadata: HashMap<String, String>,
 }
 

@@ -208,6 +208,7 @@ impl Segment for GitSegment {
         Some(SegmentData {
             primary,
             secondary: status_parts.join(" "),
+            secondary_color: None,
             metadata,
         })
     }

@@ -27,7 +27,7 @@
 
 默认状态栏关注：
 
-- Claude 模型显示
+- Claude 模型显示，并在可用时追加实时推理级别
 - Claude Code 启动时的项目目录，不受临时工作目录变化影响
 - Git 分支、clean/dirty/conflict 状态和 ahead/behind 计数
 - 当前 Claude Code transcript 的 context window token 占用
@@ -261,14 +261,33 @@ context_limit = 1000000
 Claude Code 会通过 stdin 把 statusLine 数据传给命令。`best-claude-hud` 会读取：
 
 - `model`
+- `effort.level`，当前模型支持推理级别时追加到模型名称后
 - `workspace.project_dir`，用于稳定表示 Claude Code 启动目录
 - `workspace.current_dir`，用于兼容未提供 `project_dir` 的旧版 Claude Code
 - `transcript_path`
+- `session_id`，用于把 Ultracode 检测限定在当前 Claude Code 进程内
+- `context_window`
 - `cost`
 - `output_style`
 - `rate_limits`
 
-对于 context window 占用，HUD 只读取当前活跃 transcript 文件。如果新终端/新会话还没有 transcript，它会显示 `0% · 0 tokens`，不会扫描项目目录里的旧历史文件。这修复了“新开终端仍沿用上一个 Claude Code 会话 token 占用”的旧行为。
+推理模式直接追加在模型名称后，中间只保留一个空格，并使用亮紫色
+`#B45CFF` 显示。HUD 支持 `low`、`medium`、`high`、`xhigh`、`max` 和
+`ultracode`，不会增加额外图标或分隔符。
+
+Claude Code 官方 statusline 数据会把 Ultracode 报告为 `xhigh`。为了区分
+普通 `xhigh` 和 Ultracode，HUD 只会交叉检查当前 Claude Code 进程中成功的
+`/effort` 切换事件；恢复会话时不会继承上一个进程的 Ultracode 状态。
+`CLAUDE_CODE_EFFORT_LEVEL=xhigh` 与 Ultracode 兼容，其他生效中的环境变量覆盖
+则会阻止 HUD 把当前状态误报为 Ultracode。Claude Code 未提供推理级别时会
+静默省略，因此不支持该字段的模型和第三方模型仍保持纯模型名称显示。为了保持
+状态栏极简，本项目不会显示 Claude Code 版本号。
+
+对于 context window 占用，HUD 优先读取 Claude Code 官方的 `context_window`
+字段；只有这些字段缺失、为空或暂时为零时，才回退到当前活跃 transcript。
+中断响应后写入的全零 usage 占位不会清空最后一次有效读数，因此按下 `Esc`
+不会让上下文占用归零。真正的新会话仍会显示 `0% · 0 tokens`，并且不会扫描
+项目目录里的旧历史文件。
 
 ## Git 状态标识
 
@@ -334,7 +353,7 @@ cargo build --release
 mkdir -p release-artifacts
 tar -C target/release -czf release-artifacts/best-claude-hud-darwin-arm64.tar.gz best-claude-hud
 node packaging/npm/scripts/build-packages.js \
-  --version 0.1.6 \
+  --version 0.1.8 \
   --release-dir release-artifacts \
   --output-dir npm-tarballs
 ```
@@ -349,14 +368,14 @@ node packaging/npm/scripts/build-packages.js \
 创建 GitHub Release：
 
 ```bash
-git tag v0.1.6
-git push origin v0.1.6
+git tag v0.1.8
+git push origin v0.1.8
 ```
 
 npm trusted publishing 配置完成后发布：
 
 ```bash
-gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.6
+gh workflow run "npm publish" --repo GaoSSR/best-claude-hud -f version=0.1.8
 ```
 
 ## 项目资源
