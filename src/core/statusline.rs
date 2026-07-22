@@ -232,53 +232,39 @@ impl StatusLineGenerator {
                 icon.clone()
             };
 
-            let text_styled = self
-                .apply_style(
-                    &data.primary,
-                    config.colors.text.as_ref(),
-                    config.styles.text_bold,
-                )
+            let text = self
+                .render_primary_and_secondary(config, data)
                 .replace("\x1b[0m", "");
-
-            let mut segment_content = format!(" {} {} ", icon_colored, text_styled);
-
-            if !data.secondary.is_empty() {
-                let secondary_color = data
-                    .secondary_color
-                    .as_ref()
-                    .or(config.colors.text.as_ref());
-                let secondary_styled = self
-                    .apply_style(&data.secondary, secondary_color, config.styles.text_bold)
-                    .replace("\x1b[0m", "");
-                segment_content.push_str(&format!("{} ", secondary_styled));
-            }
+            let segment_content = format!(" {} {} ", icon_colored, text);
 
             // Apply background to the entire content and reset at the end
             format!("{}{}\x1b[49m", bg_code, segment_content)
         } else {
             // No background color, use original logic
             let icon_colored = self.apply_color(&icon, config.colors.icon.as_ref());
-            let text_styled = self.apply_style(
-                &data.primary,
-                config.colors.text.as_ref(),
-                config.styles.text_bold,
-            );
+            let text = self.render_primary_and_secondary(config, data);
 
-            let mut segment = format!("{} {}", icon_colored, text_styled);
-
-            if !data.secondary.is_empty() {
-                let secondary_color = data
-                    .secondary_color
-                    .as_ref()
-                    .or(config.colors.text.as_ref());
-                segment.push_str(&format!(
-                    " {}",
-                    self.apply_style(&data.secondary, secondary_color, config.styles.text_bold)
-                ));
-            }
-
-            segment
+            format!("{} {}", icon_colored, text)
         }
+    }
+
+    fn render_primary_and_secondary(&self, config: &SegmentConfig, data: &SegmentData) -> String {
+        let primary = self.apply_style(
+            &data.primary,
+            config.colors.text.as_ref(),
+            config.styles.text_bold,
+        );
+        if data.secondary.is_empty() {
+            return primary;
+        }
+
+        let secondary_color = data
+            .secondary_color
+            .as_ref()
+            .or(config.colors.text.as_ref());
+        let secondary = self.apply_style(&data.secondary, secondary_color, config.styles.text_bold);
+
+        format!("{} {}", primary, secondary)
     }
 
     fn get_icon(&self, config: &SegmentConfig) -> String {
@@ -527,8 +513,26 @@ mod tests {
     };
     use std::collections::HashMap;
 
-    #[test]
-    fn renders_model_effort_with_its_independent_bright_purple_color() {
+    fn strip_ansi(text: &str) -> String {
+        let mut visible = String::new();
+        let mut in_escape = false;
+
+        for character in text.chars() {
+            if character == '\x1b' {
+                in_escape = true;
+            } else if in_escape {
+                if character.is_alphabetic() {
+                    in_escape = false;
+                }
+            } else {
+                visible.push(character);
+            }
+        }
+
+        visible
+    }
+
+    fn model_test_config(background: Option<AnsiColor>) -> (Config, SegmentConfig) {
         let config = Config {
             style: StyleConfig {
                 mode: StyleMode::Plain,
@@ -547,29 +551,47 @@ mod tests {
             colors: ColorConfig {
                 icon: Some(AnsiColor::Color16 { c16: 14 }),
                 text: Some(AnsiColor::Color16 { c16: 14 }),
-                background: None,
+                background,
             },
             styles: TextStyleConfig::default(),
             options: HashMap::new(),
         };
-        let data = SegmentData {
-            primary: "k3[1m] 1M".to_string(),
-            secondary: "ultracode".to_string(),
+
+        (config, segment_config)
+    }
+
+    fn model_data(primary: &str, secondary: &str) -> SegmentData {
+        SegmentData {
+            primary: primary.to_string(),
+            secondary: secondary.to_string(),
             secondary_color: Some(AnsiColor::Rgb {
                 r: 180,
                 g: 92,
                 b: 255,
             }),
             metadata: HashMap::new(),
-        };
+        }
+    }
+
+    #[test]
+    fn renders_model_effort_with_its_independent_bright_purple_color() {
+        let (config, segment_config) = model_test_config(None);
+        let data = model_data("k3[1m] 1M", "ultracode");
 
         let output = StatusLineGenerator::new(config).generate(vec![(segment_config, data)]);
 
         assert!(output.contains("\x1b[96mk3[1m] 1M\x1b[0m"));
         assert!(output.contains("\x1b[38;2;180;92;255multracode\x1b[0m"));
-        assert_eq!(
-            visible_width(&output),
-            "🤖 k3[1m] 1M ultracode".chars().count()
-        );
+        assert_eq!(strip_ansi(&output), "🤖 k3[1m] 1M ultracode");
+    }
+
+    #[test]
+    fn renders_exactly_one_model_effort_space_with_a_background() {
+        let (config, segment_config) = model_test_config(Some(AnsiColor::Color256 { c256: 24 }));
+        let data = model_data("Kimi K2.7", "max");
+
+        let output = StatusLineGenerator::new(config).generate(vec![(segment_config, data)]);
+
+        assert_eq!(strip_ansi(&output), " 🤖 Kimi K2.7 max ");
     }
 }

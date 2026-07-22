@@ -10,6 +10,7 @@ use sysinfo::{get_current_pid, ProcessesToUpdate, System};
 
 const CHECKPOINT_SIZE: usize = 64;
 const MAX_ANCESTOR_DEPTH: usize = 8;
+const EFFORT_CACHE_VERSION: u8 = 1;
 const FNV_OFFSET_BASIS: u64 = 0xcbf29ce484222325;
 const FNV_PRIME: u64 = 0x100000001b3;
 
@@ -31,6 +32,7 @@ struct SessionRecord {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct EffortCache {
+    cache_version: u8,
     transcript_path: String,
     started_at: u64,
     processed_bytes: u64,
@@ -47,6 +49,7 @@ struct EffortCache {
 impl EffortCache {
     fn new(transcript_path: &Path, started_at: u64) -> Self {
         Self {
+            cache_version: EFFORT_CACHE_VERSION,
             transcript_path: transcript_path.to_string_lossy().into_owned(),
             started_at,
             processed_bytes: 0,
@@ -71,7 +74,8 @@ impl EffortCache {
             && self.modified_nanos == modified_nanos
             && self.changed_nanos == changed_nanos;
 
-        self.transcript_path == transcript_path.to_string_lossy()
+        self.cache_version == EFFORT_CACHE_VERSION
+            && self.transcript_path == transcript_path.to_string_lossy()
             && self.started_at == started_at
             && self.processed_bytes <= file_len
             && (self.created_nanos.is_none()
@@ -424,6 +428,7 @@ fn apply_transcript_event(event: TranscriptEvent, cache: &mut EffortCache) {
     match event {
         TranscriptEvent::EffortCommand { prompt_id } => {
             cache.pending_prompt_id = Some(prompt_id);
+            cache.selection = Some(EffortSelection::Other);
         }
         TranscriptEvent::CommandOutput { prompt_id, content }
             if cache.pending_prompt_id.as_deref() == Some(prompt_id.as_str()) =>
@@ -671,6 +676,84 @@ mod tests {
             .open(&transcript)
             .unwrap();
         std::io::Write::write_all(&mut file, blocked.as_bytes()).unwrap();
+
+        assert_eq!(resolve_with_cache(&transcript, &cache, 0), "xhigh");
+
+        fs::remove_file(transcript).unwrap();
+        fs::remove_file(cache).unwrap();
+    }
+
+    #[test]
+    fn override_and_unrecognized_outputs_clear_stale_ultracode() {
+        let cases = [
+            (
+                "xhigh-override",
+                "CLAUDE_CODE_EFFORT_LEVEL=max overrides this session — clear it and xhigh takes over",
+            ),
+            (
+                "low-override",
+                "CLAUDE_CODE_EFFORT_LEVEL=max overrides this session — clear it and low takes over",
+            ),
+            (
+                "future-output",
+                "A future Claude Code effort response that the HUD does not recognize yet",
+            ),
+        ];
+
+        for (prompt_id, stdout) in cases {
+            let contents = format!(
+                "{}{}{}{}",
+                command("ultra", "2026-07-22T11:31:00Z", "ultracode"),
+                output(
+                    "ultra",
+                    "2026-07-22T11:31:00Z",
+                    "Set effort level to ultracode (this session only): xhigh + dynamic workflow orchestration"
+                ),
+                command(prompt_id, "2026-07-22T11:32:00Z", "low"),
+                output(prompt_id, "2026-07-22T11:32:00Z", stdout),
+            );
+            let transcript = write_transcript(&contents);
+            let cache = temp_path("cache.json");
+
+            assert_eq!(
+                resolve_with_cache(&transcript, &cache, 0),
+                "xhigh",
+                "matched /effort output must fail closed for {prompt_id}"
+            );
+
+            fs::remove_file(transcript).unwrap();
+            fs::remove_file(cache).unwrap();
+        }
+    }
+
+    #[test]
+    fn legacy_cache_is_invalidated_after_effort_semantics_change() {
+        let contents = format!(
+            "{}{}{}{}",
+            command("ultra", "2026-07-22T11:31:00Z", "ultracode"),
+            output(
+                "ultra",
+                "2026-07-22T11:31:00Z",
+                "Set effort level to ultracode (this session only): xhigh + dynamic workflow orchestration"
+            ),
+            command("unknown", "2026-07-22T11:32:00Z", "low"),
+            output(
+                "unknown",
+                "2026-07-22T11:32:00Z",
+                "A future Claude Code effort response that the HUD does not recognize yet"
+            ),
+        );
+        let transcript = write_transcript(&contents);
+        let cache = temp_path("cache.json");
+        assert_eq!(resolve_with_cache(&transcript, &cache, 0), "xhigh");
+
+        let mut legacy_cache: Value = serde_json::from_slice(&fs::read(&cache).unwrap()).unwrap();
+        legacy_cache
+            .as_object_mut()
+            .unwrap()
+            .remove("cache_version");
+        legacy_cache["selection"] = Value::String("Ultracode".to_string());
+        fs::write(&cache, serde_json::to_vec(&legacy_cache).unwrap()).unwrap();
 
         assert_eq!(resolve_with_cache(&transcript, &cache, 0), "xhigh");
 
