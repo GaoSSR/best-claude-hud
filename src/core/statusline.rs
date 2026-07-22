@@ -1,5 +1,9 @@
-use crate::config::{AnsiColor, Config, SegmentConfig, StyleMode};
+use crate::config::{AnsiColor, Config, SegmentConfig, SegmentId, StyleMode};
 use crate::core::segments::SegmentData;
+use unicode_width::UnicodeWidthStr;
+
+const EFFORT_ICON_PLAIN: &str = "🧠";
+const EFFORT_ICON_NERD_FONT: &str = "\u{f09d1}";
 
 /// Strip ANSI escape sequences and return visible text length
 fn visible_width(text: &str) -> usize {
@@ -26,7 +30,7 @@ fn visible_width(text: &str) -> usize {
         }
     }
 
-    visible.chars().count()
+    visible.width()
 }
 
 pub struct StatusLineGenerator {
@@ -238,7 +242,7 @@ impl StatusLineGenerator {
             let segment_content = format!(" {} {} ", icon_colored, text);
 
             // Apply background to the entire content and reset at the end
-            format!("{}{}\x1b[49m", bg_code, segment_content)
+            format!("{}{}\x1b[0m", bg_code, segment_content)
         } else {
             // No background color, use original logic
             let icon_colored = self.apply_color(&icon, config.colors.icon.as_ref());
@@ -263,6 +267,17 @@ impl StatusLineGenerator {
             .as_ref()
             .or(config.colors.text.as_ref());
         let secondary = self.apply_style(&data.secondary, secondary_color, config.styles.text_bold);
+
+        if config.id == SegmentId::Model {
+            let separator = self.apply_color("|", Some(&AnsiColor::Color16 { c16: 7 }));
+            let effort_icon = match self.config.style.mode {
+                StyleMode::Plain => EFFORT_ICON_PLAIN,
+                StyleMode::NerdFont | StyleMode::Powerline => EFFORT_ICON_NERD_FONT,
+            };
+            let effort_icon = self.apply_style(effort_icon, secondary_color, false);
+
+            return format!("{} {} {} {}", primary, separator, effort_icon, secondary);
+        }
 
         format!("{} {}", primary, secondary)
     }
@@ -532,11 +547,18 @@ mod tests {
         visible
     }
 
-    fn model_test_config(background: Option<AnsiColor>) -> (Config, SegmentConfig) {
+    fn model_test_config(
+        mode: StyleMode,
+        background: Option<AnsiColor>,
+    ) -> (Config, SegmentConfig) {
         let config = Config {
             style: StyleConfig {
-                mode: StyleMode::Plain,
-                separator: " | ".to_string(),
+                mode,
+                separator: if mode == StyleMode::Powerline {
+                    "\u{e0b0}".to_string()
+                } else {
+                    " | ".to_string()
+                },
             },
             segments: Vec::new(),
             theme: "test".to_string(),
@@ -573,25 +595,114 @@ mod tests {
         }
     }
 
+    fn directory_segment() -> (SegmentConfig, SegmentData) {
+        let config = SegmentConfig {
+            id: SegmentId::Directory,
+            enabled: true,
+            icon: IconConfig {
+                plain: "📁".to_string(),
+                nerd_font: "D".to_string(),
+            },
+            colors: ColorConfig {
+                icon: None,
+                text: None,
+                background: None,
+            },
+            styles: TextStyleConfig::default(),
+            options: HashMap::new(),
+        };
+        let data = SegmentData {
+            primary: "repo".to_string(),
+            secondary: String::new(),
+            secondary_color: None,
+            metadata: HashMap::new(),
+        };
+
+        (config, data)
+    }
+
     #[test]
     fn renders_model_effort_with_its_independent_bright_purple_color() {
-        let (config, segment_config) = model_test_config(None);
+        let (config, segment_config) = model_test_config(StyleMode::Plain, None);
         let data = model_data("k3[1m] 1M", "ultracode");
 
         let output = StatusLineGenerator::new(config).generate(vec![(segment_config, data)]);
 
         assert!(output.contains("\x1b[96mk3[1m] 1M\x1b[0m"));
+        assert!(output.contains("\x1b[37m|\x1b[0m"));
+        assert!(output.contains("\x1b[38;2;180;92;255m🧠\x1b[0m"));
         assert!(output.contains("\x1b[38;2;180;92;255multracode\x1b[0m"));
-        assert_eq!(strip_ansi(&output), "🤖 k3[1m] 1M ultracode");
+        assert_eq!(strip_ansi(&output), "🤖 k3[1m] 1M | 🧠 ultracode");
     }
 
     #[test]
-    fn renders_exactly_one_model_effort_space_with_a_background() {
-        let (config, segment_config) = model_test_config(Some(AnsiColor::Color256 { c256: 24 }));
+    fn renders_model_effort_item_with_a_background() {
+        let (config, segment_config) =
+            model_test_config(StyleMode::Plain, Some(AnsiColor::Color256 { c256: 24 }));
         let data = model_data("Kimi K2.7", "max");
 
         let output = StatusLineGenerator::new(config).generate(vec![(segment_config, data)]);
 
-        assert_eq!(strip_ansi(&output), " 🤖 Kimi K2.7 max ");
+        assert_eq!(strip_ansi(&output), " 🤖 Kimi K2.7 | 🧠 max ");
+        assert!(output.ends_with("\x1b[0m"));
+    }
+
+    #[test]
+    fn renders_nerd_font_brain_for_model_effort() {
+        let (config, segment_config) = model_test_config(StyleMode::NerdFont, None);
+        let data = model_data("Kimi K2.7", "xhigh");
+
+        let output = StatusLineGenerator::new(config).generate(vec![(segment_config, data)]);
+
+        assert_eq!(strip_ansi(&output), "M Kimi K2.7 | 󰧑 xhigh");
+    }
+
+    #[test]
+    fn renders_nerd_font_brain_for_powerline_model_effort() {
+        let (config, segment_config) =
+            model_test_config(StyleMode::Powerline, Some(AnsiColor::Color256 { c256: 24 }));
+        let data = model_data("Kimi K2.7", "max");
+        let (directory_config, directory_data) = directory_segment();
+
+        let output = StatusLineGenerator::new(config).generate(vec![
+            (segment_config, data),
+            (directory_config, directory_data),
+        ]);
+
+        assert!(output.contains("\u{e0b0}"));
+        assert_eq!(strip_ansi(&output), " M Kimi K2.7 | 󰧑 max \u{e0b0}D repo");
+    }
+
+    #[test]
+    fn omits_model_effort_separator_and_icon_without_effort() {
+        let (config, segment_config) = model_test_config(StyleMode::Plain, None);
+        let data = model_data("Kimi K2.7", "");
+
+        let output = StatusLineGenerator::new(config).generate(vec![(segment_config, data)]);
+
+        assert_eq!(strip_ansi(&output), "🤖 Kimi K2.7");
+    }
+
+    #[test]
+    fn counts_model_and_effort_emoji_by_terminal_column_width() {
+        assert_eq!(visible_width("🤖 Kimi K2.7 | 🧠 max"), 21);
+    }
+
+    #[test]
+    fn wraps_before_next_segment_at_the_true_emoji_width_boundary() {
+        let (config, model_config) = model_test_config(StyleMode::Plain, None);
+        let model_data = model_data("Kimi K2.7", "max");
+        let (directory_config, directory_data) = directory_segment();
+
+        let generator = StatusLineGenerator::new(config);
+        let output = generator.generate_for_tui_preview(
+            vec![
+                (model_config, model_data),
+                (directory_config, directory_data),
+            ],
+            28,
+        );
+
+        assert_eq!(output.lines.len(), 2);
     }
 }
