@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -48,7 +48,7 @@ jobs:
           targets: ${{ matrix.target }}
 
       - name: Cache cargo
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
@@ -98,7 +98,7 @@ jobs:
           "$($hash.Hash.ToLower())  ${{ matrix.archive }}" | Out-File "${{ matrix.archive }}.sha256" -Encoding ascii
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.archive }}
           path: |
@@ -111,16 +111,16 @@ jobs:
     needs: build
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
 
       - name: Download release archives
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: release-artifacts
           merge-multiple: true
@@ -149,7 +149,7 @@ jobs:
           (cd npm-tarballs && for file in *.tgz; do sha256sum "$file" > "$file.sha256"; done)
 
       - name: Upload npm tarballs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: npm-tarballs
           path: npm-tarballs/*
@@ -161,13 +161,13 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: release-assets
           merge-multiple: true
 
       - name: Publish release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: release-assets/**/*
           draft: false
