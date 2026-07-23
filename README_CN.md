@@ -40,7 +40,7 @@
 一行完成安装并配置 Claude Code：
 
 ```bash
-npm install -g best-claude-hud && best-claude-hud --setup
+npm install -g best-claude-hud@latest && best-claude-hud --setup
 ```
 
 配置完成后需要重启 Claude Code。已经打开的会话通常不会自动重新读取 `~/.claude/settings.json`。
@@ -48,26 +48,26 @@ npm install -g best-claude-hud && best-claude-hud --setup
 仅安装：
 
 ```bash
-npm install -g best-claude-hud
+npm install -g best-claude-hud@latest
 ```
 
 使用 yarn 或 pnpm：
 
 ```bash
-yarn global add best-claude-hud
-pnpm add -g best-claude-hud
+yarn global add best-claude-hud@latest
+pnpm add -g best-claude-hud@latest
 ```
 
 国内网络可使用 npm 镜像：
 
 ```bash
-npm install -g best-claude-hud --registry https://registry.npmmirror.com && best-claude-hud --setup
+npm install -g best-claude-hud@latest --registry https://registry.npmmirror.com && best-claude-hud --setup
 ```
 
 更新：
 
 ```bash
-npm update -g best-claude-hud
+npm install -g best-claude-hud@latest
 ```
 
 卸载：
@@ -127,7 +127,7 @@ nix develop
 
 ## Claude Code 配置
 
-`npm install -g best-claude-hud` 只会安装命令本身。Claude Code 不会自动调用它，必须配置 `statusLine` 后才会显示 HUD。
+`npm install -g best-claude-hud@latest` 只会安装命令本身。Claude Code 不会自动调用它，必须配置 `statusLine` 后才会显示 HUD。
 
 推荐方式：
 

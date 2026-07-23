@@ -40,7 +40,7 @@ The default statusline focuses on:
 Install and configure Claude Code in one line:
 
 ```bash
-npm install -g best-claude-hud && best-claude-hud --setup
+npm install -g best-claude-hud@latest && best-claude-hud --setup
 ```
 
 Restart Claude Code after setup. Existing sessions do not automatically reload `~/.claude/settings.json`.
@@ -48,26 +48,26 @@ Restart Claude Code after setup. Existing sessions do not automatically reload `
 Install only:
 
 ```bash
-npm install -g best-claude-hud
+npm install -g best-claude-hud@latest
 ```
 
 Using yarn or pnpm:
 
 ```bash
-yarn global add best-claude-hud
-pnpm add -g best-claude-hud
+yarn global add best-claude-hud@latest
+pnpm add -g best-claude-hud@latest
 ```
 
 For users in China:
 
 ```bash
-npm install -g best-claude-hud --registry https://registry.npmmirror.com && best-claude-hud --setup
+npm install -g best-claude-hud@latest --registry https://registry.npmmirror.com && best-claude-hud --setup
 ```
 
 Update an existing installation:
 
 ```bash
-npm update -g best-claude-hud
+npm install -g best-claude-hud@latest
 ```
 
 Uninstall:
@@ -127,7 +127,7 @@ nix develop
 
 ## Claude Code Configuration
 
-`npm install -g best-claude-hud` only installs the command. Claude Code will not show the HUD until `statusLine` is configured.
+`npm install -g best-claude-hud@latest` only installs the command. Claude Code will not show the HUD until `statusLine` is configured.
 
 Recommended:
 
