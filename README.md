@@ -1,4 +1,4 @@
-<h4 align="right"><strong><a href="./README.md">English</a></strong> | <a href="./README_CN.md">简体中文</a></h4>
+<h4 align="right"><strong><a href="./README.md">English</a></strong> | <a href="./README_CN.md">简体中文</a> | <a href="./README_JA.md">日本語</a></h4>
 
 <p align="center">
   <a href="https://github.com/GaoSSR/best-claude-hud">
