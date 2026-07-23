@@ -19,7 +19,7 @@
 
 ## best-claude-hud Overview
 
-`best-claude-hud` is a high-performance Claude Code statusline tool written in Rust. It shows the status information you actually need while using Claude Code in a terminal: model, workspace, Git branch/status, context window usage, and optional usage/rate-limit metadata.
+`best-claude-hud` is a high-performance Claude Code statusline tool written in Rust. It shows the status information you actually need while using Claude Code in a terminal: model and live reasoning effort, workspace, Git branch/status, context window usage, and optional usage/rate-limit metadata.
 
 <p align="center">
   <img src="assets/best-claude-hud-preview.png" alt="best-claude-hud statusline preview" width="1200">

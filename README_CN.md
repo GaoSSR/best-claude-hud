@@ -19,7 +19,7 @@
 
 ## best-claude-hud 概览
 
-`best-claude-hud` 是一个用 Rust 写的高性能 Claude Code 状态栏工具。它在终端中展示真正有用的 Claude Code 工作状态：当前模型、工作目录、Git 分支/状态、上下文窗口占用，以及可选的 usage/rate limit 信息。
+`best-claude-hud` 是一个用 Rust 写的高性能 Claude Code 状态栏工具。它在终端中展示真正有用的 Claude Code 工作状态：当前模型及实时推理强度、工作目录、Git 分支/状态、上下文窗口占用，以及可选的 usage/rate limit 信息。
 
 <p align="center">
   <img src="assets/best-claude-hud-preview.png" alt="best-claude-hud statusline preview" width="1200">
