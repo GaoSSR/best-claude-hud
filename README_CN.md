@@ -261,7 +261,7 @@ context_limit = 1000000
 Claude Code 会通过 stdin 把 statusLine 数据传给命令。`best-claude-hud` 会读取：
 
 - `model`
-- `effort.level`，当前模型支持推理级别时追加到模型名称后
+- `effort.level`，当前模型支持推理级别时显示为独立项目
 - `workspace.project_dir`，用于稳定表示 Claude Code 启动目录
 - `workspace.current_dir`，用于兼容未提供 `project_dir` 的旧版 Claude Code
 - `transcript_path`
@@ -271,9 +271,10 @@ Claude Code 会通过 stdin 把 statusLine 数据传给命令。`best-claude-hud
 - `output_style`
 - `rate_limits`
 
-推理模式直接追加在模型名称后，中间只保留一个空格，并使用亮紫色
-`#B45CFF` 显示。HUD 支持 `low`、`medium`、`high`、`xhigh`、`max` 和
-`ultracode`，不会增加额外图标或分隔符。
+推理强度项目位于模型名称后，使用明确的 ASCII 竖线和脑图标分隔，例如
+`Kimi K2.7 | 🧠 max`，标签使用亮紫色 `#B45CFF` 显示。HUD 支持 `low`、
+`medium`、`high`、`xhigh`、`max` 和 `ultracode`；Nerd Font 与 Powerline
+模式使用对应的 Nerd Font 脑图标。
 
 Claude Code 官方 statusline 数据会把 Ultracode 报告为 `xhigh`。为了区分
 普通 `xhigh` 和 Ultracode，HUD 只会交叉检查当前 Claude Code 进程中成功的

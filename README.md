@@ -261,7 +261,7 @@ context_limit = 1000000
 Claude Code sends statusLine data to the command through stdin. `best-claude-hud` reads:
 
 - `model`
-- `effort.level`, appended to the model name when the current model supports reasoning effort
+- `effort.level`, shown as a separate item when the current model supports reasoning effort
 - `workspace.project_dir` for the stable Claude Code launch directory
 - `workspace.current_dir` as a fallback for older Claude Code versions
 - `transcript_path`
@@ -271,9 +271,11 @@ Claude Code sends statusLine data to the command through stdin. `best-claude-hud
 - `output_style`
 - `rate_limits`
 
-The mode is appended directly after the model name with one space and rendered
-in bright purple (`#B45CFF`). The HUD displays `low`, `medium`, `high`, `xhigh`,
-`max`, or `ultracode`; no extra icon or separator is added.
+The effort item follows the model name with an explicit ASCII pipe and a brain
+icon, for example `Kimi K2.7 | 🧠 max`. Its label is rendered in bright purple
+(`#B45CFF`). The HUD displays `low`, `medium`, `high`, `xhigh`, `max`, or
+`ultracode`; Nerd Font and Powerline modes use the matching Nerd Font brain
+glyph.
 
 Claude Code's official statusline payload reports Ultracode as `xhigh`. To keep
 ordinary `xhigh` and Ultracode distinct, the HUD cross-checks successful

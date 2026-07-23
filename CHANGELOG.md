@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.10 - 2026-07-23
+
+- Display reasoning effort as a visually separate item with an explicit ASCII
+  pipe and a brain icon in Plain, Nerd Font, and Powerline modes.
+- Measure emoji by terminal column width so statusline previews wrap at the
+  correct boundary.
+- Fully reset ANSI styling after background segments so effort colors and bold
+  text cannot leak into subsequent terminal output.
+
 ## 0.1.9 - 2026-07-23
 
 - Clear stale Ultracode state as soon as a new `/effort` command appears, so

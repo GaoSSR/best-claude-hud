@@ -226,9 +226,10 @@ jobs:
 
             - npm-first installation with platform-specific native binaries.
             - Compact Claude Code statusline focused on model, workspace, Git state, and context usage.
-            - Live reasoning mode is appended to the model name in bright purple, including distinct `xhigh`, `max`, and `ultracode` labels.
+            - Live reasoning effort is shown as a distinct bright-purple item with a brain icon, including separate `xhigh`, `max`, and `ultracode` labels.
             - Reasoning-mode cache upgrades fail closed so cancelled, overridden, or unknown `/effort` output cannot preserve stale Ultracode state.
-            - Model and reasoning mode use one explicit ASCII space across background and non-background themes.
+            - Model and reasoning effort use an explicit ASCII pipe separator across Plain, Nerd Font, Powerline, background, and non-background themes.
+            - Emoji-aware terminal width and complete ANSI resets prevent wrapping errors and style leakage.
             - Workspace and Git status remain anchored to the Claude Code launch directory when skills, subagents, or shell commands change the temporary working directory.
             - Context window parsing avoids reusing stale token data from older terminal sessions.
             - Interrupted Claude Code responses no longer reset context usage to zero.
