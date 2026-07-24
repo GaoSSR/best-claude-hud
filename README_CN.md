@@ -1,4 +1,4 @@
-<h4 align="right"><a href="./README.md">English</a> | <strong><a href="./README_CN.md">简体中文</a></strong></h4>
+<h4 align="right"><a href="./README.md">English</a> | <strong><a href="./README_CN.md">简体中文</a></strong> | <a href="./README_JA.md">日本語</a></h4>
 
 <p align="center">
   <a href="https://github.com/GaoSSR/best-claude-hud">
@@ -37,7 +37,7 @@
 
 `best-claude-hud` 通过 npm 分发。npm 包使用预构建原生二进制，用户不需要本地安装 Rust。
 
-一行完成安装并配置 Claude Code：
+一行安装 `best-claude-hud` 并配置 Claude Code：
 
 ```bash
 npm install -g best-claude-hud@latest && best-claude-hud --setup
@@ -93,7 +93,7 @@ nix profile install github:GaoSSR/best-claude-hud
 best-claude-hud --setup
 ```
 
-如果使用 home-manager 或其他声明式配置，可以让 Claude Code 直接指向 Nix store 中的二进制：
+如果使用 home-manager 或其他声明式配置，可以让 Claude Code 直接指向 Nix store 中的二进制。下面的示例会声明式管理整个 `~/.claude/settings.json` 文件，并且不会合并现有设置；它仅适用于新建文件，或全部 Claude Code 设置均由同一份 Nix 配置管理的情况：
 
 ```nix
 # 在你的 flake inputs 中添加：
@@ -117,7 +117,7 @@ in
 }
 ```
 
-如果你已经用 Nix 管理 `~/.claude/settings.json`，请把上面的 `statusLine` 合并进现有 JSON，不要直接替换整个文件。
+如果继续手动维护 `~/.claude/settings.json`，请运行 `best-claude-hud --setup` 或直接添加 `statusLine` 块，不要使用这段 `home.file` 声明。如果该文件已由 Nix 管理，请将 `statusLine` 加入现有 Nix 表达式。若要将未托管的文件迁移到 Home Manager，请先把所有现有设置写入 Nix，再在激活前移走原文件，例如将其重命名为备份。
 
 开发环境：
 
