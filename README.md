@@ -37,7 +37,7 @@ The default statusline focuses on:
 
 `best-claude-hud` is distributed through npm. The npm package uses prebuilt native binaries; users do not need Rust installed.
 
-Install and configure Claude Code in one line:
+Install `best-claude-hud` and configure Claude Code in one line:
 
 ```bash
 npm install -g best-claude-hud@latest && best-claude-hud --setup
@@ -93,7 +93,7 @@ nix profile install github:GaoSSR/best-claude-hud
 best-claude-hud --setup
 ```
 
-For home-manager or another declarative setup, point Claude Code directly at the Nix store binary:
+For home-manager or another declarative setup, point Claude Code directly at the Nix store binary. The example below declaratively manages the entire `~/.claude/settings.json` file and does not merge existing settings. Use it only for a new file or when all Claude Code settings are declared in the same Nix configuration:
 
 ```nix
 # In your flake inputs:
@@ -117,7 +117,7 @@ in
 }
 ```
 
-If you already manage `~/.claude/settings.json` with Nix, merge the `statusLine` block into your existing JSON instead of replacing the whole file.
+If you keep `~/.claude/settings.json` manually, run `best-claude-hud --setup` or add the `statusLine` block directly; do not use this `home.file` declaration. If Nix already manages the file, add `statusLine` to the existing Nix expression. To migrate an unmanaged file to Home Manager, first copy every existing setting into Nix, then move the original file out of the way—for example, by renaming it as a backup—before activation.
 
 Development shell:
 

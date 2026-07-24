@@ -12,9 +12,9 @@
 
 <p align="center">
   <img alt="Rust" src="https://img.shields.io/badge/Rust-CLI-orange" />
-  <img alt="MacOS Linux Windows supported" src="https://img.shields.io/badge/MacOS%20%7C%20Linux%20%7C%20Windows-supported-brightgreen" />
-  <img alt="Command: best-claude-hud" src="https://img.shields.io/badge/command-best--claude--hud-8A2BE2" />
-  <img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue" />
+  <img alt="MacOS Linux Windows 対応" src="https://img.shields.io/badge/MacOS%20%7C%20Linux%20%7C%20Windows-supported-brightgreen" />
+  <img alt="コマンド: best-claude-hud" src="https://img.shields.io/badge/command-best--claude--hud-8A2BE2" />
+  <img alt="ライセンス: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue" />
 </p>
 
 ## best-claude-hud の概要
@@ -22,7 +22,7 @@
 `best-claude-hud` は、Rust で書かれた高性能な Claude Code ステータスラインツールです。ターミナルで Claude Code を使用するときに実際に必要なステータス情報、すなわちモデルとリアルタイムの推論強度、ワークスペース、Git ブランチと状態、コンテキストウィンドウの使用量、さらにオプションの使用量とレート制限のメタデータを表示します。
 
 <p align="center">
-  <img src="assets/best-claude-hud-preview.png" alt="best-claude-hud statusline preview" width="1200">
+  <img src="assets/best-claude-hud-preview.png" alt="best-claude-hud ステータスラインのプレビュー" width="1200">
 </p>
 
 デフォルトのステータスラインは、次の情報を重視しています。
@@ -37,7 +37,7 @@
 
 `best-claude-hud` は npm を通じて配布されています。npm パッケージはビルド済みのネイティブバイナリを使用するため、ユーザーが Rust をインストールする必要はありません。
 
-次の 1 行で Claude Code をインストールして設定できます。
+次の 1 行で `best-claude-hud` をインストールし、Claude Code を設定できます。
 
 ```bash
 npm install -g best-claude-hud@latest && best-claude-hud --setup
@@ -93,7 +93,7 @@ nix profile install github:GaoSSR/best-claude-hud
 best-claude-hud --setup
 ```
 
-home-manager または別の宣言的な設定を使用する場合は、Claude Code から Nix store のバイナリを直接参照します。
+home-manager または別の宣言的な設定を使用する場合は、Claude Code から Nix store のバイナリを直接参照します。以下の例は `~/.claude/settings.json` ファイル全体を宣言的に管理し、既存の設定はマージしません。新規ファイルを作成する場合、または Claude Code のすべての設定を同じ Nix 構成で管理する場合にのみ使用してください。
 
 ```nix
 # In your flake inputs:
@@ -117,7 +117,7 @@ in
 }
 ```
 
-すでに Nix で `~/.claude/settings.json` を管理している場合は、ファイル全体を置き換えず、`statusLine` ブロックを既存の JSON にマージしてください。
+`~/.claude/settings.json` を手動で管理し続ける場合は、`best-claude-hud --setup` を実行するか、`statusLine` ブロックを直接追加してください。この `home.file` 宣言は使用しないでください。すでに Nix で管理している場合は、既存の Nix 式に `statusLine` を追加してください。管理対象外のファイルを Home Manager に移行する場合は、既存の設定をすべて Nix に移してから、アクティベーション前に元のファイルを別の場所へ移動してください（バックアップ名への変更など）。
 
 開発シェル:
 
