@@ -5,18 +5,18 @@ Minimal Claude Code statusline HUD powered by Rust.
 ## Install
 
 ```bash
-npm install -g best-claude-hud && best-claude-hud --setup
+npm install -g best-claude-hud@latest && best-claude-hud --setup
 ```
 
 For users in China:
 
 ```bash
-npm install -g best-claude-hud --registry https://registry.npmmirror.com && best-claude-hud --setup
+npm install -g best-claude-hud@latest --registry https://registry.npmmirror.com && best-claude-hud --setup
 ```
 
 ## Claude Code Configuration
 
-`npm install -g best-claude-hud` only installs the command. Claude Code will not show the HUD until `statusLine` is configured.
+`npm install -g best-claude-hud@latest` only installs the command. Claude Code will not show the HUD until `statusLine` is configured.
 
 Recommended:
 
