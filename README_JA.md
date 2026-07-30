@@ -15,6 +15,7 @@
   <img alt="MacOS Linux Windows 対応" src="https://img.shields.io/badge/MacOS%20%7C%20Linux%20%7C%20Windows-supported-brightgreen" />
   <img alt="コマンド: best-claude-hud" src="https://img.shields.io/badge/command-best--claude--hud-8A2BE2" />
   <img alt="ライセンス: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue" />
+  <a href="https://codeguilds.dev/packages/best-claude-hud"><img alt="Available on CodeGuilds" src="https://img.shields.io/badge/Available_on-CodeGuilds-6366f1" /></a>
 </p>
 
 ## best-claude-hud の概要
