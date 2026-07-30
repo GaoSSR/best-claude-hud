@@ -18,6 +18,14 @@
   <a href="https://codeguilds.dev/packages/best-claude-hud"><img alt="Available on CodeGuilds" src="https://img.shields.io/badge/Available_on-CodeGuilds-6366f1" /></a>
 </p>
 
+<p align="center">
+  <a href="https://github.com/GaoSSR/best-claude-hud"><img alt="GitHub stars" src="https://img.shields.io/github/stars/GaoSSR/best-claude-hud?logo=github&amp;label=stars" /></a>
+  <a href="https://www.npmjs.com/package/best-claude-hud"><img alt="npm downloads per month" src="https://img.shields.io/npm/dm/best-claude-hud?logo=npm&amp;label=downloads%2Fmonth" /></a>
+  <a href="https://gittrend.io/repo/GaoSSR/best-claude-hud"><img alt="GitTrend peak rank 79 on 2026-07-28" src="https://img.shields.io/badge/GitTrend-Peak_%2379_%C2%B7_2026.07.28-6366F1" /></a>
+  <a href="https://ossinsight.io/analyze/GaoSSR/best-claude-hud"><img alt="OSSInsight rank 37 on 2026-07-30" src="https://img.shields.io/badge/OSSInsight-%2337_%C2%B7_2026.07.30-0EA5E9" /></a>
+  <a href="https://github.com/fhan235/github1K/blob/3e055d2ca990cf1cd7748b9cf1fb91710f0b0cdb/reports/summary-1k-2026-07-26_created-since-2020-01-01.md"><img alt="GitHub1K report rank 6 on 2026-07-26" src="https://img.shields.io/badge/GitHub1K_Report-%236_%C2%B7_2026.07.26-B8860B" /></a>
+</p>
+
 ## best-claude-hud Overview
 
 `best-claude-hud` is a high-performance Claude Code statusline tool written in Rust. It shows the status information you actually need while using Claude Code in a terminal: model and live reasoning effort, workspace, Git branch/status, context window usage, and optional usage/rate-limit metadata.
