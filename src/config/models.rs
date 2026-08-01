@@ -340,6 +340,16 @@ impl Default for ModelConfig {
                     display_name: "Qwen Coder".to_string(),
                     context_limit: 256_000,
                 },
+                ModelEntry {
+                    pattern: "minimax-m3".to_string(),
+                    display_name: "MiniMax M3".to_string(),
+                    context_limit: 1_000_000,
+                },
+                ModelEntry {
+                    pattern: "minimax-m2.7".to_string(),
+                    display_name: "MiniMax M2.7".to_string(),
+                    context_limit: 204_800,
+                },
             ],
             context_modifiers: vec![ContextModifier {
                 pattern: "[1m]".to_string(),
@@ -347,5 +357,32 @@ impl Default for ModelConfig {
                 context_limit: 1_000_000,
             }],
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::ModelConfig;
+
+    #[test]
+    fn resolves_minimax_m3_from_default_config() {
+        let config = ModelConfig::default();
+
+        assert_eq!(
+            config.get_display_name("MiniMax-M3"),
+            Some("MiniMax M3".to_string())
+        );
+        assert_eq!(config.get_context_limit("MiniMax-M3"), 1_000_000);
+    }
+
+    #[test]
+    fn resolves_minimax_m27_from_default_config() {
+        let config = ModelConfig::default();
+
+        assert_eq!(
+            config.get_display_name("MiniMax-M2.7"),
+            Some("MiniMax M2.7".to_string())
+        );
+        assert_eq!(config.get_context_limit("MiniMax-M2.7"), 204_800);
     }
 }
