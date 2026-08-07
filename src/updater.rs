@@ -109,7 +109,7 @@ impl UpdateState {
             use std::process::Command;
             if let Ok(output) = Command::new("tasklist")
                 .arg("/FI")
-                .arg(&format!("PID eq {}", pid))
+                .arg(format!("PID eq {}", pid))
                 .output()
             {
                 String::from_utf8_lossy(&output.stdout).contains(&pid.to_string())
