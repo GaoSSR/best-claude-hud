@@ -218,10 +218,14 @@ impl StatusLineGenerator {
     }
 
     fn render_segment(&self, config: &SegmentConfig, data: &SegmentData) -> String {
-        let icon = if let Some(dynamic_icon) = data.metadata.get("dynamic_icon") {
-            dynamic_icon.clone()
-        } else {
-            self.get_icon(config)
+        // dynamic_icon requires NerdFont
+        let use_nerd_font = matches!(
+            self.config.style.mode,
+            StyleMode::NerdFont | StyleMode::Powerline
+        );
+        let icon = match data.metadata.get("dynamic_icon") {
+            Some(dynamic_icon) if use_nerd_font => dynamic_icon.clone(),
+            _ => self.get_icon(config),
         };
 
         // Apply background color to the entire segment if set
@@ -619,6 +623,105 @@ mod tests {
         };
 
         (config, data)
+    }
+
+    fn usage_config(mode: StyleMode) -> Config {
+        Config {
+            style: StyleConfig {
+                mode,
+                separator: if mode == StyleMode::Powerline {
+                    "\u{e0b0}".to_string()
+                } else {
+                    " | ".to_string()
+                },
+            },
+            segments: Vec::new(),
+            theme: "test".to_string(),
+        }
+    }
+
+    fn usage_segment_config() -> SegmentConfig {
+        SegmentConfig {
+            id: SegmentId::Usage,
+            enabled: true,
+            icon: IconConfig {
+                plain: "📊".to_string(),
+                nerd_font: "U".to_string(),
+            },
+            colors: ColorConfig {
+                icon: None,
+                text: None,
+                background: None,
+            },
+            styles: TextStyleConfig::default(),
+            options: HashMap::new(),
+        }
+    }
+
+    fn usage_data() -> SegmentData {
+        let mut metadata = HashMap::new();
+        metadata.insert("dynamic_icon".to_string(), "★".to_string());
+
+        SegmentData {
+            primary: "42%".to_string(),
+            secondary: String::new(),
+            secondary_color: None,
+            metadata,
+        }
+    }
+
+    #[test]
+    fn plain_mode_uses_configured_icon() {
+        let config = usage_config(StyleMode::Plain);
+
+        let output =
+            StatusLineGenerator::new(config).generate(vec![(usage_segment_config(), usage_data())]);
+        let stripped = strip_ansi(&output);
+
+        assert!(
+            stripped.contains('📊'),
+            "missing configured plain icon: {stripped}"
+        );
+        assert!(
+            !stripped.contains('★'),
+            "dynamic_icon leaked into plain mode: {stripped}"
+        );
+    }
+
+    #[test]
+    fn nerd_font_mode_uses_dynamic_icon() {
+        let config = usage_config(StyleMode::NerdFont);
+
+        let output =
+            StatusLineGenerator::new(config).generate(vec![(usage_segment_config(), usage_data())]);
+        let stripped = strip_ansi(&output);
+
+        assert!(
+            stripped.contains('★'),
+            "expected dynamic_icon in nerd_font mode: {stripped}"
+        );
+        assert!(
+            !stripped.contains('📊'),
+            "configured icon leaked into nerd_font mode: {stripped}"
+        );
+    }
+
+    #[test]
+    fn powerline_mode_uses_dynamic_icon() {
+        let config = usage_config(StyleMode::Powerline);
+
+        let output =
+            StatusLineGenerator::new(config).generate(vec![(usage_segment_config(), usage_data())]);
+        let stripped = strip_ansi(&output);
+
+        assert!(
+            stripped.contains('★'),
+            "expected dynamic_icon in powerline mode: {stripped}"
+        );
+        assert!(
+            !stripped.contains('📊'),
+            "configured icon leaked into powerline mode: {stripped}"
+        );
     }
 
     #[test]
