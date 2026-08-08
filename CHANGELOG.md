@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.11 - 2026-08-08
+
+- Use the configured Usage icon in Plain mode instead of a Nerd Font progress
+  glyph, while preserving dynamic progress icons in Nerd Font and Powerline
+  modes.
+- Add regression coverage for Usage icon selection across all three display
+  modes.
+- Expand the multilingual documentation with a complete Japanese README,
+  refreshed logo and preview images, reasoning-effort guidance, and clearer
+  setup, Nix, and Home Manager ownership instructions.
+- Make npm install and update instructions explicitly target `@latest`, keep
+  the npm README synchronized, and add dated project-recognition badges.
+
 ## 0.1.10 - 2026-07-23
 
 - Display reasoning effort as a visually separate item with an explicit ASCII

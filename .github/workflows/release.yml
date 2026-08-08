@@ -222,7 +222,12 @@ jobs:
 
             Public release of `best-claude-hud`, a minimal Claude Code statusline HUD powered by Rust.
 
-            ### Highlights
+            ### What's new in ${{ github.ref_name }}
+
+            - Plain mode uses its configured Usage icon, while Nerd Font and Powerline modes retain dynamic progress icons.
+            - The documentation now includes a complete Japanese guide, refreshed visuals, clearer setup and Nix ownership guidance, and explicit `@latest` npm commands.
+
+            ### Project highlights
 
             - npm-first installation with platform-specific native binaries.
             - Compact Claude Code statusline focused on model, workspace, Git state, and context usage.
@@ -241,5 +246,5 @@ jobs:
             ### Install
 
             ```bash
-            npm install -g best-claude-hud
+            npm install -g best-claude-hud@latest
             ```
