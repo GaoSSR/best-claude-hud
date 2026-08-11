@@ -26,6 +26,10 @@
   <a href="https://github.com/fhan235/github1K/blob/3e055d2ca990cf1cd7748b9cf1fb91710f0b0cdb/reports/summary-1k-2026-07-26_created-since-2020-01-01.md"><img alt="GitHub1K report rank 6 on 2026-07-26" src="https://img.shields.io/badge/GitHub1K_Report-%236_%C2%B7_2026.07.26-B8860B" /></a>
 </p>
 
+<p align="center">
+  <a href="https://gitcode.com/GaoSSR/best-claude-hud"><img alt="AtomGit" src="https://gitcode.com/GaoSSR/best-claude-hud/star/new_badge.svg" /></a>
+</p>
+
 ## best-claude-hud 概览
 
 `best-claude-hud` 是一个用 Rust 写的高性能 Claude Code 状态栏工具。它在终端中展示真正有用的 Claude Code 工作状态：当前模型及实时推理强度、工作目录、Git 分支/状态、上下文窗口占用，以及可选的 usage/rate limit 信息。

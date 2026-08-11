@@ -26,6 +26,10 @@
   <a href="https://github.com/fhan235/github1K/blob/3e055d2ca990cf1cd7748b9cf1fb91710f0b0cdb/reports/summary-1k-2026-07-26_created-since-2020-01-01.md"><img alt="GitHub1K report rank 6 on 2026-07-26" src="https://img.shields.io/badge/GitHub1K_Report-%236_%C2%B7_2026.07.26-B8860B" /></a>
 </p>
 
+<p align="center">
+  <a href="https://gitcode.com/GaoSSR/best-claude-hud"><img alt="AtomGit" src="https://gitcode.com/GaoSSR/best-claude-hud/star/new_badge.svg" /></a>
+</p>
+
 ## best-claude-hud の概要
 
 `best-claude-hud` は、Rust で書かれた高性能な Claude Code ステータスラインツールです。ターミナルで Claude Code を使用するときに実際に必要なステータス情報、すなわちモデルとリアルタイムの推論強度、ワークスペース、Git ブランチと状態、コンテキストウィンドウの使用量、さらにオプションの使用量とレート制限のメタデータを表示します。
