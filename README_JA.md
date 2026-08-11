@@ -27,7 +27,7 @@
 </p>
 
 <p align="center">
-  <a href="https://gitcode.com/GaoSSR/best-claude-hud"><img alt="AtomGit" src="https://gitcode.com/GaoSSR/best-claude-hud/star/new_badge.svg" /></a>
+  <a href="https://gitcode.com/GaoSSR/best-claude-hud"><img alt="AtomGit" src="https://gitcode.com/GaoSSR/best-claude-hud/star/new_badge.svg" width="100" /></a>
 </p>
 
 ## best-claude-hud の概要
