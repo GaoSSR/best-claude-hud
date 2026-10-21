@@ -270,6 +270,28 @@ mod tests {
     }
 
     #[test]
+    fn minimax_context_fallback_preserves_statusline_window_override() {
+        for model in ["MiniMax-M3.1-Flash", "MiniMax-M3"] {
+            for (window, expected) in [(None, "10%"), (Some(200_000), "50%")] {
+                let input: InputData = serde_json::from_value(serde_json::json!({
+                    "model": model,
+                    "workspace": { "current_dir": "/tmp/project" },
+                    "transcript_path": "/tmp/missing.jsonl",
+                    "context_window": {
+                        "total_input_tokens": 100_000,
+                        "context_window_size": window
+                    }
+                }))
+                .unwrap();
+
+                let data = ContextWindowSegment::new().collect(&input).unwrap();
+                assert_eq!(data.primary, format!("{expected} · 100k tokens"));
+                assert_eq!(data.metadata.get("model"), Some(&model.to_string()));
+            }
+        }
+    }
+
+    #[test]
     fn transcript_parser_prefers_latest_complete_usage() {
         let path = write_temp_transcript(
             r#"{"type":"assistant","message":{"usage":{"input_tokens":1000}}}

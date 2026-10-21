@@ -340,6 +340,16 @@ impl Default for ModelConfig {
                     display_name: "Qwen Coder".to_string(),
                     context_limit: 256_000,
                 },
+                ModelEntry {
+                    pattern: "minimax-m3.1-flash".to_string(),
+                    display_name: "MiniMax M3.1 Flash".to_string(),
+                    context_limit: 1_000_000,
+                },
+                ModelEntry {
+                    pattern: "minimax-m3".to_string(),
+                    display_name: "MiniMax M3".to_string(),
+                    context_limit: 1_000_000,
+                },
             ],
             context_modifiers: vec![ContextModifier {
                 pattern: "[1m]".to_string(),
@@ -347,5 +357,65 @@ impl Default for ModelConfig {
                 context_limit: 1_000_000,
             }],
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{ModelConfig, ModelEntry};
+
+    #[test]
+    fn preserves_custom_and_legacy_entries_and_modifiers() {
+        let mut config = ModelConfig::default();
+        config.model_entries.insert(
+            0,
+            ModelEntry {
+                pattern: "minimax-m3.1-flash".to_string(),
+                display_name: "Custom Flash".to_string(),
+                context_limit: 128_000,
+            },
+        );
+        config.model_entries.insert(
+            0,
+            ModelEntry {
+                pattern: "minimax-m2.7".to_string(),
+                display_name: "Saved legacy model".to_string(),
+                context_limit: 204_800,
+            },
+        );
+
+        assert_eq!(
+            config.get_display_name("MiniMax-M3.1-Flash"),
+            Some("Custom Flash".to_string())
+        );
+        assert_eq!(config.get_context_limit("MiniMax-M3.1-Flash"), 128_000);
+        assert_eq!(config.get_context_limit("MiniMax-M2.7"), 204_800);
+        assert_eq!(
+            config.get_context_limit("MiniMax-M3.1-Flash[1m]"),
+            1_000_000
+        );
+        assert_eq!(config.get_display_name("custom-model"), None);
+    }
+
+    #[test]
+    fn resolves_flash_before_m3_with_one_million_context() {
+        let config = ModelConfig::default();
+
+        assert_eq!(
+            config.get_display_name("MiniMax-M3.1-Flash"),
+            Some("MiniMax M3.1 Flash".to_string())
+        );
+        assert_eq!(config.get_context_limit("MiniMax-M3.1-Flash"), 1_000_000);
+    }
+
+    #[test]
+    fn resolves_m3_with_one_million_context() {
+        let config = ModelConfig::default();
+
+        assert_eq!(
+            config.get_display_name("MiniMax-M3"),
+            Some("MiniMax M3".to_string())
+        );
+        assert_eq!(config.get_context_limit("MiniMax-M3"), 1_000_000);
     }
 }
