@@ -81,6 +81,27 @@ mod tests {
     }
 
     #[test]
+    fn displays_current_minimax_models_and_preserves_effort_and_legacy_input() {
+        for (id, name) in [
+            ("MiniMax-M3.1-Flash", "MiniMax M3.1 Flash"),
+            ("MiniMax-M3", "MiniMax M3"),
+            ("MiniMax-M2.7", "Legacy display"),
+            ("custom-model", "Custom display"),
+        ] {
+            let data = ModelSegment::new()
+                .collect(&input(
+                    json!({ "id": id, "display_name": name }),
+                    Some(json!({ "level": "max" })),
+                ))
+                .unwrap();
+
+            assert_eq!(data.primary, name);
+            assert_eq!(data.secondary, "max");
+            assert_eq!(data.metadata.get("model_id"), Some(&id.to_string()));
+        }
+    }
+
+    #[test]
     fn appends_supported_effort_levels_to_the_model_segment() {
         let segment = ModelSegment::new();
 
